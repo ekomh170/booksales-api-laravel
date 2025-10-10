@@ -26,10 +26,7 @@ Repository ini berisi kumpulan tugas-tugas yang dikerjakan selama mengikuti prog
 - **Nama**: Eko Muchamad Haryono
 - **NIM**: 0110223079
 - **Topik**: Pemrograman PHP - Pertemuan 2
-- **Kode**: PP-2024225
 - **Group**: 2
-- **Tanggal**: 10 Oktober 2025
-- **Repository**: booksales-api-laravel
 - **Deadline**: Senin, 13 Oktober 2025, 23:59
 - **Teknologi**: Laravel 12, PHP 8.2, MySQL
 
