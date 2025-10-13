@@ -1,7 +1,9 @@
+{{-- Halaman untuk tampilkan daftar penulis --}}
 @extends('layouts.app')
 
 @section('content')
 <h1>Daftar Penulis</h1>
+{{-- Table untuk tampilkan data penulis --}}
 <table>
   <thead>
     <tr>
@@ -11,6 +13,7 @@
     </tr>
   </thead>
   <tbody>
+    {{-- Loop untuk tampilkan setiap penulis --}}
     @foreach($authors as $a)
       <tr>
         <td>{{ $a['id'] }}</td>
