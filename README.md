@@ -1,4 +1,4 @@
-# SIB Fullstack Web Developer - Materi Pemrograman PHP
+# SIB Fullstack Web Developer - Tugas Pemrograman PHP & Laravel
 
 ## Identitas Mahasiswa
 - **NIM**: 0110223079
