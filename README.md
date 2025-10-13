@@ -1,4 +1,4 @@
-# SIB Fullstack Web Developer - Materi Pemrograman PHP
+# SIB Fullstack Web Developer - Tugas Pemrograman PHP & Laravel
 
 ## Identitas Mahasiswa
 - **NIM**: 0110223079
@@ -18,45 +18,6 @@ Repository ini berisi kumpulan tugas-tugas yang dikerjakan selama mengikuti prog
 - Dokumentasi progress pembelajaran
 - Portfolio project selama program
 - Referensi untuk pembelajaran berkelanjutan
-
-## 🎯 Tugas Pertemuan 1: Sistem MVC Sederhana
-
-**Identitas Tugas:**
-
-- **Nama**: Eko Muchamad Haryono
-- **NIM**: 0110223079
-- **Topik**: Pemrograman PHP - Pertemuan 1
-- **Group**: 2
-- **Deadline**: Rabu, 15 Oktober 2025, 23:59
-- **Teknologi**: Laravel 12, PHP 8.2, MVC Pattern
-
-**Deskripsi Tugas:**
-
-1. Buatlah sistem MVC sederhana untuk menampilkan data array pada Model kemudian ditampilkan dengan view
-2. Lakukan pada studi kasus tabel Genre dan Author pada dokumen Brief
-3. Berikan masing-masing 5 data pada Model
-4. Push ke GitHub, kemudian cantumkan ke kantung tugas:
-   - Link repository
-   - File Model Genre dan Author
-
-**Implementasi MVC:**
-
-**Model:**
-- `Genre.php` - 5 data genre buku
-- `Author.php` - 5 data penulis
-
-**Controller:**
-- `LibraryController.php` - Handle request genres() dan authors()
-
-**View:**
-- `layouts/app.blade.php` - Layout utama
-- `genres/index.blade.php` - Tampilan daftar genre
-- `authors/index.blade.php` - Tampilan daftar penulis
-
-**Routes:**
-- `/` - Redirect ke halaman genres
-- `/genres` - Tampilkan daftar genre
-- `/authors` - Tampilkan daftar penulis
 
 ---
 *Repository dibuat untuk program SIB Fullstack Web Developer (NFA) - Batch 2025*
