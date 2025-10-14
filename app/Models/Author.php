@@ -2,20 +2,31 @@
 
 namespace App\Models;
 
-// Model Author untuk data penulis buku
-// Pakai array biasa dulu, nanti bisa diganti database
-class Author
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+// Model Author menggunakan Eloquent untuk database
+class Author extends Model
 {
-    // Fungsi untuk ambil semua data author
-    public static function all(): array
+    use HasFactory;
+
+    // Kolom yang boleh diisi mass assignment
+    protected $fillable = [
+        'name',
+        'email',
+        'country',
+        'birth_date',
+        'biography'
+    ];
+
+    // Cast tanggal
+    protected $casts = [
+        'birth_date' => 'date',
+    ];
+
+    // Relasi one-to-many dengan Book
+    public function books()
     {
-        // Array berisi 5 penulis terkenal
-        return [
-            ['id' => 1, 'nama' => 'Tere Liye',         'negara' => 'Indonesia'],
-            ['id' => 2, 'nama' => 'Andrea Hirata',     'negara' => 'Indonesia'],
-            ['id' => 3, 'nama' => 'J.K. Rowling',      'negara' => 'Inggris'],
-            ['id' => 4, 'nama' => 'George Orwell',     'negara' => 'Inggris'],
-            ['id' => 5, 'nama' => 'Yuval Noah Harari', 'negara' => 'Israel'],
-        ];
+        return $this->hasMany(Book::class);
     }
 }
