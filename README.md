@@ -1,10 +1,10 @@
-# SIB Fullstack Web Developer - Tugas Pemrograman PHP & Laravel
+# SIB Fullstack Web Developer - Tugas Pemrograman Framework Laravel & PHP - FWD
 
 ## Identitas Mahasiswa
 - **NIM**: 0110223079
 - **Nama**: Eko Muchamad Haryono
 - **Aktivitas**: SIB Fullstack Web Developer (NFA)
-- **Topik**: Pemrograman PHP
+- **Topik**: Framework Laravel - FWD
 - **Group**: 2
 - **Ruangan**: Zoom Mentoring Kelompok 02 Fullstack Web Developer - Gedung NF Academy Training Center
 - **Prodi & Peminatan**: Teknik Informatika - Software Engineering
@@ -18,6 +18,85 @@ Repository ini berisi kumpulan tugas-tugas yang dikerjakan selama mengikuti prog
 - Dokumentasi progress pembelajaran
 - Portfolio project selama program
 - Referensi untuk pembelajaran berkelanjutan
+
+## 🎯 Tugas Pertemuan 1: Sistem MVC Sederhana
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Topik**: Pemrograman PHP - Pertemuan 1
+- **Group**: 2
+- **Deadline**: Rabu, 15 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, MVC Pattern
+
+**Deskripsi Tugas:**
+
+1. Buatlah sistem MVC sederhana untuk menampilkan data array pada Model kemudian ditampilkan dengan view
+2. Lakukan pada studi kasus tabel Genre dan Author pada dokumen Brief
+3. Berikan masing-masing 5 data pada Model
+4. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File Model Genre dan Author
+
+**Implementasi MVC:**
+
+**Model:**
+- `Genre.php` - 5 data genre buku
+- `Author.php` - 5 data penulis
+
+**Controller:**
+- `LibraryController.php` - Handle request genres() dan authors()
+
+**View:**
+- `layouts/app.blade.php` - Layout utama
+- `genres/index.blade.php` - Tampilan daftar genre
+- `authors/index.blade.php` - Tampilan daftar penulis
+
+**Routes:**
+- `/` - Redirect ke halaman genres
+- `/genres` - Tampilkan daftar genre
+- `/authors` - Tampilkan daftar penulis
+
+## 🎯 Tugas Pertemuan 2: Migration dan Seeder
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Topik**: Framework Laravel - Migration dan Seeder
+- **Group**: 2
+- **Deadline**: Kamis, 16 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, MySQL, Migration, Seeder
+
+**Deskripsi Tugas:**
+
+1. Buatlah tabel Book dan Author menggunakan fitur Laravel Migration dengan mengikuti susunan dari Brief yang sudah tersedia
+2. Berikan 5 data dummy yang dibuat menggunakan Laravel Seeder
+3. Jangan lupa untuk mengatur file model, controller, routing, dan view agar data yang sudah dibuat dapat ditampilkan ke view
+4. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File Migration dan Seeder Book dan Author
+
+**Implementasi Migration & Seeder:**
+
+**Migration:**
+- `create_authors_table.php` - Struktur tabel authors
+- `create_books_table.php` - Struktur tabel books dengan foreign key ke authors
+
+**Seeder:**
+- `AuthorSeeder.php` - 5 data dummy penulis
+- `BookSeeder.php` - 5 data dummy buku
+
+**Model (Eloquent):**
+- `Author.php` - Model Author dengan relasi hasMany books
+- `Book.php` - Model Book dengan relasi belongsTo author
+
+**Controller:**
+- Update `LibraryController.php` - Gunakan database via Eloquent
+
+**View:**
+- Update views untuk menampilkan data dari database
 
 ---
 *Repository dibuat untuk program SIB Fullstack Web Developer (NFA) - Batch 2025*
