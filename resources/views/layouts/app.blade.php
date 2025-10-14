@@ -17,7 +17,7 @@
 <body>
   {{-- Navigasi antar halaman --}}
   <nav>
-    <a href="{{ route('genres.index') }}">Genres</a>
+    <a href="{{ route('books.index') }}">Books</a>
     <a href="{{ route('authors.index') }}">Authors</a>
   </nav>
   <hr>
