@@ -98,6 +98,93 @@ Repository ini berisi kumpulan tugas-tugas yang dikerjakan selama mengikuti prog
 **View:**
 - Update views untuk menampilkan data dari database
 
+## 🎯 Tugas Pertemuan 3: REST API
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Topik**: Framework Laravel - REST API
+- **Group**: 2
+- **Deadline**: Jumat, 17 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, REST API, Postman
+
+**Deskripsi Tugas:**
+
+1. Menggunakan API - Pindahkan semua routing yang sudah dibuat ke `route/api.php`
+2. Atur ulang controller untuk menampilkan data dengan output JSON
+3. Gunakan POSTMAN untuk melakukan testing aplikasi
+4. Hapus file view yang sudah dibuat (pembelajaran fokus ke API, tidak membutuhkan view)
+5. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File Controller Book dan Author
+
+**Implementasi REST API:**
+
+**API Routes (`routes/api.php`):**
+```php
+GET /api/authors          // Mendapatkan semua authors
+GET /api/books            // Mendapatkan semua books
+GET /api/authors/{id}     // Mendapatkan detail author beserta books
+GET /api/books/{id}       // Mendapatkan detail book beserta author
+```
+
+**Controller (`LibraryController.php`):**
+- Method `authors()` - Return JSON semua authors
+- Method `books()` - Return JSON semua books dengan relasi author
+- Method `authorDetail($id)` - Return JSON detail author beserta books-nya
+- Method `bookDetail($id)` - Return JSON detail book beserta author-nya
+
+**Response Format:**
+```json
+{
+  "success": true,
+  "message": "Data berhasil diambil",
+  "data": [...]
+}
+```
+
+**Testing dengan Postman:**
+
+1. **GET All Authors**
+   - URL: `http://localhost:8000/api/authors`
+   - Method: GET
+   - Expected: Status 200, JSON array berisi 5 authors
+
+2. **GET All Books**
+   - URL: `http://localhost:8000/api/books`
+   - Method: GET
+   - Expected: Status 200, JSON array berisi 5 books dengan data author
+
+3. **GET Author Detail**
+   - URL: `http://localhost:8000/api/authors/1`
+   - Method: GET
+   - Expected: Status 200, JSON object author dengan list books-nya
+
+4. **GET Book Detail**
+   - URL: `http://localhost:8000/api/books/1`
+   - Method: GET
+   - Expected: Status 200, JSON object book dengan data author
+
+**Cara Menjalankan:**
+
+```bash
+# Jalankan development server
+php artisan serve
+
+# Akses API di browser atau Postman
+http://localhost:8000/api/authors
+http://localhost:8000/api/books
+```
+
+**Perubahan dari Tugas Sebelumnya:**
+- ✅ Routes dipindahkan dari `web.php` ke `api.php`
+- ✅ Controller diubah mengembalikan JSON response
+- ✅ File views dihapus (genres, authors, books, layouts)
+- ✅ Fokus ke REST API, tidak ada tampilan web
+
+
+
 ---
 *Repository dibuat untuk program SIB Fullstack Web Developer (NFA) - Batch 2025*
 
