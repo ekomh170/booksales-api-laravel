@@ -1,0 +1,155 @@
+{
+	"info": {
+		"_postman_id": "booksales-api-2025",
+		"name": "Booksales API - Tugas Pertemuan 3",
+		"description": "Collection untuk Menyelesaikan REST API Pertemuan 3 Booksales\n\n**Identitas:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Tugas: FL-2024226 - Pertemuan 3\n- Group: 2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Penulis (Authors)",
+			"item": [
+				{
+					"name": "Ambil Data Semua Penulis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/authors",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Endpoint untuk mendapatkan semua data authors dari database"
+					},
+					"response": []
+				},
+				{
+					"name": "Ambil Data Detail Penulis",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/authors/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						},
+						"description": "Endpoint untuk mendapatkan detail author berdasarkan ID beserta daftar books yang ditulis"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengelola data penulis"
+		},
+		{
+			"name": "Buku (Books)",
+			"item": [
+				{
+					"name": "Ambil Data Semua Buku",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "Endpoint untuk mendapatkan semua data books beserta informasi author"
+					},
+					"response": []
+				},
+				{
+					"name": "Ambil Data Detail Buku",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/books/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"books",
+								"1"
+							]
+						},
+						"description": "Endpoint untuk mendapatkan detail book berdasarkan ID beserta informasi author"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengelola data buku"
+		},
+		{
+			"name": "Selamat Datang",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						""
+					]
+				},
+				"description": "Endpoint welcome yang menampilkan informasi API dan daftar endpoint yang tersedia"
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}
