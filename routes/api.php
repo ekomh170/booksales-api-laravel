@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\LibraryController;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\BookController;
 
 /**
  * API Routes untuk Tugas Pertemuan 3
@@ -10,14 +11,11 @@ use App\Http\Controllers\LibraryController;
  * Contoh: /api/authors, /api/books
  */
 
-// Route API untuk mendapatkan daftar authors
-Route::get('/authors', [LibraryController::class, 'authors'])->name('api.authors.index');
+// Route API untuk Authors
+Route::get('/authors', [AuthorController::class, 'index'])->name('api.authors.index');
+Route::get('/authors/{id}', [AuthorController::class, 'show'])->name('api.authors.show');
 
-// Route API untuk mendapatkan daftar books
-Route::get('/books', [LibraryController::class, 'books'])->name('api.books.index');
+// Route API untuk Books
+Route::get('/books', [BookController::class, 'index'])->name('api.books.index');
+Route::get('/books/{id}', [BookController::class, 'show'])->name('api.books.show');
 
-// Route API untuk mendapatkan detail author berdasarkan ID
-Route::get('/authors/{id}', [LibraryController::class, 'authorDetail'])->name('api.authors.show');
-
-// Route API untuk mendapatkan detail book berdasarkan ID
-Route::get('/books/{id}', [LibraryController::class, 'bookDetail'])->name('api.books.show');
