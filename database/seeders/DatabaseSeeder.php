@@ -13,8 +13,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Jalankan seeder untuk Author dan Book
+        // Jalankan seeder untuk Genre, Author dan Book
         $this->call([
+            GenreSeeder::class,
             AuthorSeeder::class,
             BookSeeder::class,
         ]);

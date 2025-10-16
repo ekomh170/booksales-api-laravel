@@ -183,10 +183,152 @@ http://localhost:8000/api/books
 - ✅ File views dihapus (genres, authors, books, layouts)
 - ✅ Fokus ke REST API, tidak ada tampilan web
 
+## 🎯 Tugas Pertemuan 4: Create Data API
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Topik**: Framework Laravel - Create & Read Data API
+- **Group**: 2
+- **Deadline**: Sabtu, 18 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, REST API, Postman
+
+**Deskripsi Tugas:**
+
+1. Buatlah fitur **Read all data** untuk tabel **genre** dan **author**
+2. Buatlah fitur **Create data** untuk tabel **genre** dan **author**
+3. Gunakan **POSTMAN** untuk melakukan testing aplikasi
+4. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File Controller Genre dan Author
+
+**Implementasi Fitur Create & Read:**
+
+**API Routes (`routes/api.php`):**
+```php
+// Genres
+GET  /api/genres          // Read all genres
+POST /api/genres          // Create new genre
+
+// Authors
+GET  /api/authors         // Read all authors
+POST /api/authors         // Create new author
+GET  /api/authors/{id}    // Read author detail with books
+```
+
+**Controllers:**
+
+**GenreController.php:**
+- `index()` - GET all genres dari database
+- `store()` - POST create genre baru dengan validasi
+
+**AuthorController.php (Updated):**
+- `index()` - GET all authors dari database
+- `store()` - POST create author baru dengan validasi
+- `show($id)` - GET detail author beserta books
+
+**Database Schema:**
+
+**Tabel Genres:**
+```sql
+- id (bigint, PK)
+- name (varchar 255)
+- slug (varchar 255, unique)
+- description (text, nullable)
+- created_at, updated_at
+```
+
+**Request & Response Format:**
+
+**POST /api/genres (Create Genre):**
+```json
+// Request Body
+{
+  "name": "Science Fiction",
+  "slug": "science-fiction",    // optional, auto-generated
+  "description": "Cerita fiksi ilmiah"
+}
+
+// Response (201 Created)
+{
+  "success": true,
+  "message": "Genre berhasil ditambahkan",
+  "data": {
+    "id": 6,
+    "name": "Science Fiction",
+    "slug": "science-fiction",
+    "description": "Cerita fiksi ilmiah",
+    "created_at": "2025-10-16T...",
+    "updated_at": "2025-10-16T..."
+  }
+}
+```
+
+**POST /api/authors (Create Author):**
+```json
+// Request Body
+{
+  "name": "John Doe",
+  "email": "john.doe@email.com",
+  "country": "Amerika",
+  "birth_date": "1980-05-15",    // optional
+  "biography": "Penulis terkenal..."  // optional
+}
+
+// Response (201 Created)
+{
+  "success": true,
+  "message": "Author berhasil ditambahkan",
+  "data": {
+    "id": 6,
+    "name": "John Doe",
+    ...
+  }
+}
+```
+
+**Validasi:**
+- Genre: name (required), slug (unique), description (optional)
+- Author: name (required), email (required, unique), country (required), birth_date & biography (optional)
+
+**Testing dengan Postman:**
+
+1. **GET /api/genres** - Ambil semua data genre
+2. **POST /api/genres** - Tambah genre baru
+3. **GET /api/authors** - Ambil semua data author
+4. **POST /api/authors** - Tambah author baru
+
+**Cara Menjalankan:**
+
+```bash
+# Migrasi database
+php artisan migrate
+
+# Seed data dummy
+php artisan db:seed
+
+# Jalankan server
+php artisan serve
+
+# Test di Postman
+POST http://localhost:8000/api/genres
+POST http://localhost:8000/api/authors
+```
+
+**Fitur Baru:**
+- ✅ Tabel genres dengan migration & seeder
+- ✅ GenreController dengan method index & store
+- ✅ AuthorController ditambah method store
+- ✅ Validasi input data dengan Laravel Validation
+- ✅ Auto-generate slug untuk genre
+- ✅ HTTP Status Code 201 untuk resource created
+
 
 
 ---
 *Repository dibuat untuk program SIB Fullstack Web Developer (NFA) - Batch 2025*
+
 
 ---
 

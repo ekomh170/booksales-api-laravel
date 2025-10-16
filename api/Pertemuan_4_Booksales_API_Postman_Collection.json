@@ -1,0 +1,452 @@
+{
+	"info": {
+		"_postman_id": "pertemuan-4-booksales-api-2025",
+		"name": "Pertemuan 4 - Booksales API - Create & Read",
+		"description": "Collection untuk testing Booksales API - Pertemuan 4: CRUD Create & Read untuk Genre dan Author\n\n**Dibuat oleh:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Pertemuan: 4 (16 Oktober 2025)\n- Topik: CRUD API - Create & Read untuk Genre dan Author",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Genres",
+			"item": [
+				{
+					"name": "Get All Genres",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Mengambil semua data genres dari database.\n\n**Expected Response:**\n- Status: 200 OK\n- Body: JSON array berisi semua genres"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Mystery\",\n    \"slug\": \"mystery\",\n    \"description\": \"Cerita misteri dan teka-teki yang menegangkan\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Membuat data genre baru.\n\n**Validation Rules:**\n- name: required, string, max:100, unique\n- slug: optional, string, max:100, unique (auto-generate jika kosong)\n- description: optional, string\n\n**Expected Response:**\n- Status: 201 Created\n- Body: JSON object berisi genre yang baru dibuat"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre - Auto Slug",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Science Fiction\",\n    \"description\": \"Cerita fiksi ilmiah tentang teknologi dan masa depan\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Test auto-generate slug dari name.\n\nSlug akan otomatis dibuat dari name: \"Science Fiction\" → \"science-fiction\""
+					},
+					"response": []
+				},
+				{
+					"name": "Create Genre - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Test validation error - name required\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Test validation error ketika field required tidak diisi.\n\n**Expected Response:**\n- Status: 422 Unprocessable Entity\n- Body: Validation error messages"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengelola data Genres"
+		},
+		{
+			"name": "Authors",
+			"item": [
+				{
+					"name": "Get All Authors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Mengambil semua data authors dari database.\n\n**Expected Response:**\n- Status: 200 OK\n- Body: JSON array berisi semua authors"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Author Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						},
+						"description": "Mengambil detail author berdasarkan ID beserta buku-bukunya.\n\n**Expected Response:**\n- Status: 200 OK (jika ditemukan)\n- Status: 404 Not Found (jika tidak ditemukan)\n- Body: JSON object berisi detail author dan relasi books"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tere Liye\",\n    \"email\": \"tere.liye@example.com\",\n    \"country\": \"Indonesia\",\n    \"birth_date\": \"1979-05-21\",\n    \"biography\": \"Penulis produktif Indonesia dengan berbagai karya bestseller seperti Rindu, Pulang, dan serial Bumi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Membuat data author baru.\n\n**Validation Rules:**\n- name: required, string, max:255\n- email: required, email, max:255, unique\n- country: required, string, max:100\n- birth_date: optional, date (Y-m-d)\n- biography: optional, string\n\n**Expected Response:**\n- Status: 201 Created\n- Body: JSON object berisi author yang baru dibuat"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author - Minimal Data",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Andrea Hirata\",\n    \"email\": \"andrea.hirata@example.com\",\n    \"country\": \"Indonesia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Test create author dengan data minimal (hanya required fields)."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author - Email Duplicate",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Duplicate\",\n    \"email\": \"nadhifa.allya@example.com\",\n    \"country\": \"Indonesia\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Test validation error ketika email sudah ada di database.\n\n**Expected Response:**\n- Status: 422 Unprocessable Entity\n- Body: Validation error \"The email has already been taken.\""
+					},
+					"response": []
+				},
+				{
+					"name": "Create Author - Validation Error",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test Validation\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Test validation error ketika required fields tidak diisi.\n\n**Expected Response:**\n- Status: 422 Unprocessable Entity\n- Body: Validation error messages untuk email dan country"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengelola data Authors"
+		},
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Get All Books",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "Mengambil semua data books beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK\n- Body: JSON array berisi semua books dengan relasi author"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book Detail",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/books/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"books",
+								"1"
+							]
+						},
+						"description": "Mengambil detail book berdasarkan ID beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK (jika ditemukan)\n- Status: 404 Not Found (jika tidak ditemukan)\n- Body: JSON object berisi detail book dan relasi author"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint untuk mengelola data Books (Read Only)"
+		}
+	]
+}
