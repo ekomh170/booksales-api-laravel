@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-// Model Genre untuk menyimpan data genre buku
-// Menggunakan array statis karena belum pakai database
-class Genre
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Model Genre menggunakan Eloquent untuk database
+ * Tugas Pertemuan 4 - Create & Read Genre
+ */
+class Genre extends Model
 {
-    // Method untuk mengambil semua data genre
-    public static function all(): array
-    {
-        // Return array berisi 5 data genre
-        return [
-            ['id' => 1, 'nama' => 'Fiksi',     'slug' => 'fiksi'],
-            ['id' => 2, 'nama' => 'Nonfiksi',  'slug' => 'nonfiksi'],
-            ['id' => 3, 'nama' => 'Sci-Fi',    'slug' => 'sci-fi'],
-            ['id' => 4, 'nama' => 'Biografi',  'slug' => 'biografi'],
-            ['id' => 5, 'nama' => 'Teknologi', 'slug' => 'teknologi'],
-        ];
-    }
+    use HasFactory;
+
+    // Kolom yang boleh diisi mass assignment
+    protected $fillable = [
+        'name',
+        'slug',
+        'description'
+    ];
 }
