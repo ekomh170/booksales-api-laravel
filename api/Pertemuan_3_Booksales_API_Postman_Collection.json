@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "booksales-api-2025",
 		"name": "Booksales API - Tugas Pertemuan 3",
-		"description": "Collection untuk Menyelesaikan REST API Pertemuan 3 Booksales\n\n**Identitas:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Tugas: FL-2024226 - Pertemuan 3\n- Group: 2",
+		"description": "Collection untuk Menyelesaikan REST API Pertemuan 3 Booksales\n\n**Identitas:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Pertemuan: 3\n- Group: 2",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [

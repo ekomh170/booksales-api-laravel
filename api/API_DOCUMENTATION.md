@@ -5,7 +5,6 @@
 ### Pertemuan 3
 - **Nama**: Eko Muchamad Haryono
 - **NIM**: 0110223079
-- **Kode Tugas**: FL-2024226
 - **Pertemuan**: 3 (15 Oktober 2025)
 - **Topik**: REST API dengan Laravel
 - **Group**: 2
@@ -14,7 +13,6 @@
 ### Pertemuan 4
 - **Nama**: Eko Muchamad Haryono
 - **NIM**: 0110223079
-- **Kode Tugas**: FL-2024226
 - **Pertemuan**: 4 (16 Oktober 2025)
 - **Topik**: CRUD API - Create & Read untuk Genre dan Author
 - **Group**: 2

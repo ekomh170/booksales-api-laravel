@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "pertemuan-4-booksales-api-2025",
 		"name": "Pertemuan 4 - Booksales API - Create & Read",
-		"description": "Collection untuk testing Booksales API - Pertemuan 4: CRUD Create & Read untuk Genre dan Author\n\n**Dibuat oleh:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Kode Tugas: FL-2024226\n- Pertemuan: 4 (16 Oktober 2025)\n- Topik: CRUD API - Create & Read untuk Genre dan Author",
+		"description": "Collection untuk testing Booksales API - Pertemuan 4: CRUD Create & Read untuk Genre dan Author\n\n**Dibuat oleh:**\n- Nama: Eko Muchamad Haryono\n- NIM: 0110223079\n- Pertemuan: 4 (16 Oktober 2025)\n- Topik: CRUD API - Create & Read untuk Genre dan Author",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
