@@ -1,0 +1,581 @@
+{
+	"info": {
+		"_postman_id": "p5-booksales-api-2025",
+		"name": "Pertemuan 5 - Booksales API (Full CRUD)",
+		"description": "Collection untuk testing Full CRUD REST API Booksales - Genre dan Author dengan apiResource routing. Includes Show, Update, and Destroy operations with 404 validation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Genre CRUD",
+			"item": [
+				{
+					"name": "1. Get All Genres",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres"]
+						},
+						"description": "Mengambil semua data genres dari database"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create New Genre",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Horror\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres"]
+						},
+						"description": "Membuat genre baru. Auto-generate slug dari name."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Show Genre by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "1"]
+						},
+						"description": "Mengambil detail genre berdasarkan ID. Return 404 jika tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Update Genre",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Science Fiction\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "1"]
+						},
+						"description": "Update genre berdasarkan ID. Validasi unique name kecuali untuk data yang sedang diupdate."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Delete Genre",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/6",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "6"]
+						},
+						"description": "Hapus genre berdasarkan ID. Return 404 jika tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "6. Show Genre Not Found (404)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "999"]
+						},
+						"description": "Test 404 error handling ketika genre ID tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "7. Update Genre Not Found (404)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Genre\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "999"]
+						},
+						"description": "Test 404 error handling ketika update genre yang tidak ada."
+					},
+					"response": []
+				},
+				{
+					"name": "8. Delete Genre Not Found (404)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres", "999"]
+						},
+						"description": "Test 404 error handling ketika delete genre yang tidak ada."
+					},
+					"response": []
+				},
+				{
+					"name": "9. Create Genre - Validation Error (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres"]
+						},
+						"description": "Test validation error ketika name kosong."
+					},
+					"response": []
+				},
+				{
+					"name": "10. Create Genre - Duplicate Name (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Fiction\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "genres"]
+						},
+						"description": "Test validation error ketika name sudah ada (duplicate)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Author CRUD",
+			"item": [
+				{
+					"name": "1. Get All Authors",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors"]
+						},
+						"description": "Mengambil semua data authors dari database"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create New Author",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Tere Liye\",\n  \"email\": \"tere.liye@example.com\",\n  \"country\": \"Indonesia\",\n  \"birth_date\": \"1979-05-21\",\n  \"biography\": \"Penulis produktif Indonesia dengan berbagai karya bestseller\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors"]
+						},
+						"description": "Membuat author baru dengan validasi email unique."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Show Author by ID (with Books)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "1"]
+						},
+						"description": "Mengambil detail author beserta relasi buku-bukunya. Return 404 jika tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Update Author",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Joanne Rowling\",\n  \"email\": \"joanne.rowling@example.com\",\n  \"country\": \"United Kingdom\",\n  \"birth_date\": \"1965-07-31\",\n  \"biography\": \"British author, philanthropist, and creator of the Harry Potter series\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "1"]
+						},
+						"description": "Update author berdasarkan ID. Validasi unique email kecuali untuk data yang sedang diupdate."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Delete Author",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/6",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "6"]
+						},
+						"description": "Hapus author berdasarkan ID. Cascade delete untuk buku-buku terkait. Return 404 jika tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "6. Show Author Not Found (404)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "999"]
+						},
+						"description": "Test 404 error handling ketika author ID tidak ditemukan."
+					},
+					"response": []
+				},
+				{
+					"name": "7. Update Author Not Found (404)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Author\",\n  \"email\": \"test@example.com\",\n  \"country\": \"Test Country\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "999"]
+						},
+						"description": "Test 404 error handling ketika update author yang tidak ada."
+					},
+					"response": []
+				},
+				{
+					"name": "8. Delete Author Not Found (404)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/999",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors", "999"]
+						},
+						"description": "Test 404 error handling ketika delete author yang tidak ada."
+					},
+					"response": []
+				},
+				{
+					"name": "9. Create Author - Validation Error (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Author\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors"]
+						},
+						"description": "Test validation error ketika field required kosong (email, country)."
+					},
+					"response": []
+				},
+				{
+					"name": "10. Create Author - Duplicate Email (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Author\",\n  \"email\": \"jk.rowling@example.com\",\n  \"country\": \"Test Country\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors"]
+						},
+						"description": "Test validation error ketika email sudah ada (duplicate)."
+					},
+					"response": []
+				},
+				{
+					"name": "11. Create Author - Invalid Email Format (422)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Test Author\",\n  \"email\": \"invalid-email-format\",\n  \"country\": \"Test Country\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": ["localhost"],
+							"port": "8000",
+							"path": ["api", "authors"]
+						},
+						"description": "Test validation error ketika format email tidak valid."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
