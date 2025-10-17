@@ -20,6 +20,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2); // Harga buku
             $table->integer('stock')->default(0); // Stok buku
             $table->string('genre'); // Genre buku
+            $table->string('cover_photo')->nullable(); // Cover foto buku (URL atau path)
             $table->foreignId('author_id')->constrained('authors')->onDelete('cascade'); // Foreign key ke authors
             $table->timestamps();
         });

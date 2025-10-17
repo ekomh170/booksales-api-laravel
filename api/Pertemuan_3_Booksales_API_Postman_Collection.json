@@ -87,7 +87,7 @@
 								"books"
 							]
 						},
-						"description": "Endpoint untuk mendapatkan semua data books beserta informasi author"
+						"description": "Endpoint untuk mendapatkan semua data books beserta informasi author.\n\n**Response mencakup:**\n- Semua field book (title, isbn, description, published_date, price, stock, genre, cover_photo)\n- Informasi author lengkap (relasi)"
 					},
 					"response": []
 				},
@@ -113,7 +113,7 @@
 								"1"
 							]
 						},
-						"description": "Endpoint untuk mendapatkan detail book berdasarkan ID beserta informasi author"
+						"description": "Endpoint untuk mendapatkan detail book berdasarkan ID beserta informasi author.\n\n**Response mencakup:**\n- Semua field book (title, isbn, description, published_date, price, stock, genre, cover_photo)\n- Informasi author lengkap (relasi)"
 					},
 					"response": []
 				}

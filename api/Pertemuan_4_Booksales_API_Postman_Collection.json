@@ -413,7 +413,7 @@
 								"books"
 							]
 						},
-						"description": "Mengambil semua data books beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK\n- Body: JSON array berisi semua books dengan relasi author"
+						"description": "Mengambil semua data books beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK\n- Body: JSON array berisi semua books dengan relasi author\n\n**Fields yang disertakan:**\n- title, isbn, description, published_date, price, stock, genre, cover_photo\n- author (relasi lengkap)"
 					},
 					"response": []
 				},
@@ -441,7 +441,7 @@
 								"1"
 							]
 						},
-						"description": "Mengambil detail book berdasarkan ID beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK (jika ditemukan)\n- Status: 404 Not Found (jika tidak ditemukan)\n- Body: JSON object berisi detail book dan relasi author"
+						"description": "Mengambil detail book berdasarkan ID beserta informasi author.\n\n**Expected Response:**\n- Status: 200 OK (jika ditemukan)\n- Status: 404 Not Found (jika tidak ditemukan)\n- Body: JSON object berisi detail book dan relasi author\n\n**Fields yang disertakan:**\n- title, isbn, description, published_date, price, stock, genre, cover_photo\n- author (relasi lengkap)"
 					},
 					"response": []
 				}

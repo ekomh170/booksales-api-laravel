@@ -18,6 +18,14 @@
 - **Group**: 2
 - **Deadline**: Kamis, 23 Oktober 2025, 23:59
 
+### Pertemuan 5
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Pertemuan**: 5 (17 Oktober 2025)
+- **Topik**: CRUD API - Show, Update, Destroy dengan apiResource
+- **Group**: 2
+- **Deadline**: Senin, 20 Oktober 2025, 23:59
+
 ---
 
 ## 🚀 Base URL
@@ -192,6 +200,7 @@ Accept: application/json
       "price": "85000.00",
       "stock": 45,
       "genre": "Romance",
+      "cover_photo": "https://images.tokopedia.net/img/cache/700/product-1/2020/8/14/batch-upload/batch-upload_0f3c3f1e-dd25-4e5a-9a5c-e7e7b7d9e0d9_700_700.jpg",
       "author_id": 1,
       "created_at": "2025-10-15T10:00:00.000000Z",
       "updated_at": "2025-10-15T10:00:00.000000Z",
@@ -249,6 +258,7 @@ Accept: application/json
     "price": "85000.00",
     "stock": 45,
     "genre": "Romance",
+    "cover_photo": "https://images.tokopedia.net/img/cache/700/product-1/2020/8/14/batch-upload/batch-upload_0f3c3f1e-dd25-4e5a-9a5c-e7e7b7d9e0d9_700_700.jpg",
     "author_id": 1,
     "created_at": "2025-10-15T10:00:00.000000Z",
     "updated_at": "2025-10-15T10:00:00.000000Z",
@@ -485,6 +495,309 @@ Content-Type: application/json
 
 ---
 
+### 9. Show Genre by ID
+
+Mengambil detail genre berdasarkan ID.
+
+**Endpoint:** `GET /api/genres/{id}`
+
+**Headers:**
+```
+Accept: application/json
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Detail genre",
+  "data": {
+    "id": 1,
+    "name": "Fiction",
+    "slug": "fiction",
+    "created_at": "2025-10-15T10:00:00.000000Z",
+    "updated_at": "2025-10-15T10:00:00.000000Z"
+  }
+}
+```
+
+**Response Error (404) - Genre Not Found:**
+```json
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
+
+---
+
+### 10. Update Genre
+
+Memperbarui data genre berdasarkan ID.
+
+**Endpoint:** `PUT /api/genres/{id}` atau `PATCH /api/genres/{id}`
+
+**Headers:**
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "name": "Science Fiction"
+}
+```
+
+**Validation Rules:**
+- `name` (required, string, max:100, unique - kecuali untuk data yang sedang diupdate)
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Genre berhasil diperbarui",
+  "data": {
+    "id": 1,
+    "name": "Science Fiction",
+    "slug": "science-fiction",
+    "created_at": "2025-10-15T10:00:00.000000Z",
+    "updated_at": "2025-10-16T05:30:00.000000Z"
+  }
+}
+```
+
+**Response Error (404) - Genre Not Found:**
+```json
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
+
+**Response Error (422) - Validation Failed:**
+```json
+{
+  "message": "The name field is required.",
+  "errors": {
+    "name": [
+      "The name field is required."
+    ]
+  }
+}
+```
+
+**Response Error (422) - Duplicate Name:**
+```json
+{
+  "message": "The name has already been taken.",
+  "errors": {
+    "name": [
+      "The name has already been taken."
+    ]
+  }
+}
+```
+
+---
+
+### 11. Delete Genre
+
+Menghapus genre berdasarkan ID.
+
+**Endpoint:** `DELETE /api/genres/{id}`
+
+**Headers:**
+```
+Accept: application/json
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Genre berhasil dihapus"
+}
+```
+
+**Response Error (404) - Genre Not Found:**
+```json
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
+
+---
+
+### 12. Show Author by ID
+
+Mengambil detail author beserta relasi buku-bukunya berdasarkan ID.
+
+**Endpoint:** `GET /api/authors/{id}`
+
+**Headers:**
+```
+Accept: application/json
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Detail author",
+  "data": {
+    "id": 1,
+    "name": "J.K. Rowling",
+    "email": "jk.rowling@example.com",
+    "country": "United Kingdom",
+    "birth_date": "1965-07-31",
+    "biography": "British author, best known for the Harry Potter series",
+    "created_at": "2025-10-14T10:00:00.000000Z",
+    "updated_at": "2025-10-14T10:00:00.000000Z",
+    "books": [
+      {
+        "id": 1,
+        "title": "Harry Potter and the Philosopher's Stone",
+        "isbn": "978-0-7475-3269-9",
+        "publication_year": 1997,
+        "price": 350000,
+        "stock": 25,
+        "genre": "Fantasy",
+        "author_id": 1,
+        "cover_photo": "https://images-na.ssl-images-amazon.com/images/I/81YOuOGFCJL.jpg",
+        "created_at": "2025-10-14T10:00:00.000000Z",
+        "updated_at": "2025-10-14T10:00:00.000000Z"
+      }
+    ]
+  }
+}
+```
+
+**Response Error (404) - Author Not Found:**
+```json
+{
+  "success": false,
+  "message": "Author tidak ditemukan"
+}
+```
+
+---
+
+### 13. Update Author
+
+Memperbarui data author berdasarkan ID.
+
+**Endpoint:** `PUT /api/authors/{id}` atau `PATCH /api/authors/{id}`
+
+**Headers:**
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "name": "Joanne Rowling",
+  "email": "joanne.rowling@example.com",
+  "country": "United Kingdom",
+  "birth_date": "1965-07-31",
+  "biography": "British author, philanthropist, and creator of the Harry Potter series"
+}
+```
+
+**Validation Rules:**
+- `name` (required, string, max:255)
+- `email` (required, email, max:255, unique - kecuali untuk data yang sedang diupdate)
+- `country` (required, string, max:100)
+- `birth_date` (optional, date format: Y-m-d)
+- `biography` (optional, string)
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Author berhasil diperbarui",
+  "data": {
+    "id": 1,
+    "name": "Joanne Rowling",
+    "email": "joanne.rowling@example.com",
+    "country": "United Kingdom",
+    "birth_date": "1965-07-31",
+    "biography": "British author, philanthropist, and creator of the Harry Potter series",
+    "created_at": "2025-10-14T10:00:00.000000Z",
+    "updated_at": "2025-10-16T06:00:00.000000Z"
+  }
+}
+```
+
+**Response Error (404) - Author Not Found:**
+```json
+{
+  "success": false,
+  "message": "Author tidak ditemukan"
+}
+```
+
+**Response Error (422) - Validation Failed:**
+```json
+{
+  "message": "The email field must be a valid email address.",
+  "errors": {
+    "email": [
+      "The email field must be a valid email address."
+    ]
+  }
+}
+```
+
+**Response Error (422) - Duplicate Email:**
+```json
+{
+  "message": "The email has already been taken.",
+  "errors": {
+    "email": [
+      "The email has already been taken."
+    ]
+  }
+}
+```
+
+---
+
+### 14. Delete Author
+
+Menghapus author berdasarkan ID.
+
+**Endpoint:** `DELETE /api/authors/{id}`
+
+**Headers:**
+```
+Accept: application/json
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Author berhasil dihapus"
+}
+```
+
+**Response Error (404) - Author Not Found:**
+```json
+{
+  "success": false,
+  "message": "Author tidak ditemukan"
+}
+```
+
+**Note:** Jika author memiliki relasi dengan buku, maka buku-buku tersebut juga akan terhapus (cascade delete) karena foreign key constraint.
+
+---
+
 ## 🧪 Testing dengan Postman
 
 ### Import Collection
@@ -494,6 +807,7 @@ Content-Type: application/json
 3. Pilih file:
    - **Pertemuan 3**: `Pertemuan_3_Booksales_API_Postman_Collection.json`
    - **Pertemuan 4**: `Pertemuan_4_Booksales_API_Postman_Collection.json`
+   - **Pertemuan 5**: `Pertemuan_5_Booksales_API_Postman_Collection.json`
 4. Collection akan otomatis ter-import dengan semua endpoint
 
 ### Menjalankan Tests
@@ -515,11 +829,32 @@ Content-Type: application/json
    - POST /api/genres (Create Genre)
    - POST /api/authors (Create Author)
 
-4. **Test Error Handling:**
-   - GET /api/authors/999 (Author tidak ditemukan)
-   - GET /api/books/999 (Book tidak ditemukan)
-   - POST /api/genres (tanpa data - validation error)
-   - POST /api/authors (email duplicate - validation error)
+4. **Test Pertemuan 5 - Full CRUD Endpoints:**
+
+   **Genre CRUD:**
+   - GET /api/genres (Index - All Genres)
+   - POST /api/genres (Store - Create Genre)
+   - GET /api/genres/{id} (Show - Genre Detail)
+   - PUT/PATCH /api/genres/{id} (Update - Edit Genre)
+   - DELETE /api/genres/{id} (Destroy - Delete Genre)
+
+   **Author CRUD:**
+   - GET /api/authors (Index - All Authors)
+   - POST /api/authors (Store - Create Author)
+   - GET /api/authors/{id} (Show - Author Detail with Books)
+   - PUT/PATCH /api/authors/{id} (Update - Edit Author)
+   - DELETE /api/authors/{id} (Destroy - Delete Author)
+
+5. **Test Error Handling:**
+   - GET /api/authors/999 (Author tidak ditemukan - 404)
+   - GET /api/books/999 (Book tidak ditemukan - 404)
+   - GET /api/genres/999 (Genre tidak ditemukan - 404)
+   - POST /api/genres (tanpa data - validation error 422)
+   - POST /api/authors (email duplicate - validation error 422)
+   - PUT /api/genres/999 (update genre tidak ada - 404)
+   - PUT /api/authors/999 (update author tidak ada - 404)
+   - DELETE /api/genres/999 (delete genre tidak ada - 404)
+   - DELETE /api/authors/999 (delete author tidak ada - 404)
 
 ### Expected Results
 
@@ -573,6 +908,7 @@ Content-Type: application/json
 - price (decimal 10,2)
 - stock (integer)
 - genre (varchar 100)
+- cover_photo (varchar 255, nullable)
 - author_id (bigint, foreign key → authors.id)
 - created_at (timestamp)
 - updated_at (timestamp)
@@ -683,6 +1019,6 @@ Content-Type: application/json
 
 ---
 
-**Dibuat untuk memenuhi Tugas Pertemuan 3**  
-**SIB Fullstack Web Developer - Nurul Fikri Academy**  
+**Dibuat untuk memenuhi Tugas Pertemuan 3**
+**SIB Fullstack Web Developer - Nurul Fikri Academy**
 **Eko Muchamad Haryono - 0110223079**
