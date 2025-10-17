@@ -83,10 +83,11 @@ Repository ini berisi kumpulan tugas-tugas yang dikerjakan selama mengikuti prog
 **Migration:**
 - `create_authors_table.php` - Struktur tabel authors
 - `create_books_table.php` - Struktur tabel books dengan foreign key ke authors
+  - Fields: title, isbn, description, published_date, price, stock, genre, **cover_photo**, author_id
 
 **Seeder:**
 - `AuthorSeeder.php` - 5 data dummy penulis
-- `BookSeeder.php` - 5 data dummy buku
+- `BookSeeder.php` - 5 data dummy buku dengan cover photo URL
 
 **Model (Eloquent):**
 - `Author.php` - Model Author dengan relasi hasMany books
