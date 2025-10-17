@@ -22,6 +22,7 @@ class BookSeeder extends Seeder
             'price' => 72000.00,
             'stock' => 30,
             'genre' => 'Romance',
+            'cover_photo' => 'https://images.tokopedia.net/img/cache/700/product-1/2020/8/14/batch-upload/batch-upload_0f3c3f1e-dd25-4e5a-9a5c-e7e7b7d9e0d9_700_700.jpg',
             'author_id' => 1, // Nadhifa Allya Tsana
         ]);
 
@@ -33,6 +34,7 @@ class BookSeeder extends Seeder
             'price' => 68000.00,
             'stock' => 45,
             'genre' => 'Romance',
+            'cover_photo' => 'https://ebooks.gramedia.com/ebook-covers/31758/big_covers/ID_MIZ2016MTH03DDDT_B.jpg',
             'author_id' => 2 // Pidi Baiq
         ]);
 
@@ -44,6 +46,7 @@ class BookSeeder extends Seeder
             'price' => 125000.00,
             'stock' => 25,
             'genre' => 'Contemporary Fiction',
+            'cover_photo' => 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1470427482i/27362503.jpg',
             'author_id' => 3 // Colleen Hoover
         ]);
 
@@ -55,6 +58,7 @@ class BookSeeder extends Seeder
             'price' => 135000.00,
             'stock' => 20,
             'genre' => 'Literary Fiction',
+            'cover_photo' => 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1571423190i/41057294.jpg',
             'author_id' => 4 // Sally Rooney
         ]);
 
@@ -66,6 +70,7 @@ class BookSeeder extends Seeder
             'price' => 140000.00,
             'stock' => 18,
             'genre' => 'Historical Fiction',
+            'cover_photo' => 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1618056744i/32620332.jpg',
             'author_id' => 5 // Taylor Jenkins Reid
         ]);
     }
