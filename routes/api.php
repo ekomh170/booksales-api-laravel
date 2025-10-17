@@ -6,22 +6,23 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\GenreController;
 
 /**
- * API Routes untuk Tugas Pertemuan 3 & 4
+ * API Routes untuk Tugas Pertemuan 3, 4 & 5
  *
  * Semua routes akan menggunakan prefix /api secara otomatis
  * Contoh: /api/authors, /api/books, /api/genres
+ *
+ * Pertemuan 5: Menggunakan apiResource untuk CRUD lengkap
  */
 
-// Route API untuk Genres (Tugas Pertemuan 4)
-Route::get('/genres', [GenreController::class, 'index'])->name('api.genres.index');
-Route::post('/genres', [GenreController::class, 'store'])->name('api.genres.store');
+// Route API Resource untuk Genres (Tugas Pertemuan 4 & 5)
+// Otomatis generate: index, store, show, update, destroy
+Route::apiResource('genres', GenreController::class);
 
-// Route API untuk Authors (Tugas Pertemuan 3 & 4)
-Route::get('/authors', [AuthorController::class, 'index'])->name('api.authors.index');
-Route::post('/authors', [AuthorController::class, 'store'])->name('api.authors.store');
-Route::get('/authors/{id}', [AuthorController::class, 'show'])->name('api.authors.show');
+// Route API Resource untuk Authors (Tugas Pertemuan 3, 4 & 5)
+// Otomatis generate: index, store, show, update, destroy
+Route::apiResource('authors', AuthorController::class);
 
-// Route API untuk Books (Tugas Pertemuan 3)
-Route::get('/books', [BookController::class, 'index'])->name('api.books.index');
-Route::get('/books/{id}', [BookController::class, 'show'])->name('api.books.show');
+// Route API untuk Books (Tugas Pertemuan 3) - Read Only
+Route::get('/books', [BookController::class, 'index'])->name('books.index');
+Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
 
