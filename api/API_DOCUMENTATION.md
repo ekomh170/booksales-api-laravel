@@ -192,6 +192,7 @@ Accept: application/json
       "price": "85000.00",
       "stock": 45,
       "genre": "Romance",
+      "cover_photo": "https://images.tokopedia.net/img/cache/700/product-1/2020/8/14/batch-upload/batch-upload_0f3c3f1e-dd25-4e5a-9a5c-e7e7b7d9e0d9_700_700.jpg",
       "author_id": 1,
       "created_at": "2025-10-15T10:00:00.000000Z",
       "updated_at": "2025-10-15T10:00:00.000000Z",
@@ -249,6 +250,7 @@ Accept: application/json
     "price": "85000.00",
     "stock": 45,
     "genre": "Romance",
+    "cover_photo": "https://images.tokopedia.net/img/cache/700/product-1/2020/8/14/batch-upload/batch-upload_0f3c3f1e-dd25-4e5a-9a5c-e7e7b7d9e0d9_700_700.jpg",
     "author_id": 1,
     "created_at": "2025-10-15T10:00:00.000000Z",
     "updated_at": "2025-10-15T10:00:00.000000Z",
@@ -573,6 +575,7 @@ Content-Type: application/json
 - price (decimal 10,2)
 - stock (integer)
 - genre (varchar 100)
+- cover_photo (varchar 255, nullable)
 - author_id (bigint, foreign key → authors.id)
 - created_at (timestamp)
 - updated_at (timestamp)
