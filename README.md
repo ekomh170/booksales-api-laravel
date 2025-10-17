@@ -325,6 +325,222 @@ POST http://localhost:8000/api/authors
 - ✅ Auto-generate slug untuk genre
 - ✅ HTTP Status Code 201 untuk resource created
 
+## 🎯 Tugas Pertemuan 5: Full CRUD API dengan apiResource
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Topik**: Framework Laravel - Full CRUD dengan apiResource
+- **Group**: 2
+- **Deadline**: Minggu, 19 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, REST API, apiResource Routing
+
+**Deskripsi Tugas:**
+
+1. Buatlah fitur **Show, Update, Destroy** data untuk tabel **Genre** dan **Author**
+2. Atur validasi ketika data yang ingin dicari **tidak ditemukan** (404 Not Found)
+3. Ubah kode `routes/api.php` dengan menggunakan **Route apiResource**
+4. Gunakan **POSTMAN** untuk melakukan testing aplikasi
+5. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File Controller Genre dan Author
+   - File routes/api.php
+
+**Implementasi Full CRUD dengan apiResource:**
+
+**API Routes (`routes/api.php`):**
+```php
+// Menggunakan apiResource untuk auto-generate 5 routes CRUD
+Route::apiResource('genres', GenreController::class);
+Route::apiResource('authors', AuthorController::class);
+
+// Auto-generated routes:
+// Genre:
+// GET    /api/genres           -> index()   (Read all)
+// POST   /api/genres           -> store()   (Create)
+// GET    /api/genres/{id}      -> show()    (Read one)
+// PUT    /api/genres/{id}      -> update()  (Update)
+// DELETE /api/genres/{id}      -> destroy() (Delete)
+
+// Author: (sama seperti di atas)
+```
+
+**Controllers dengan Full CRUD:**
+
+**GenreController.php:**
+- ✅ `index()` - GET all genres
+- ✅ `store()` - POST create genre (validasi unique name)
+- ✅ `show($id)` - GET genre by ID dengan validasi 404
+- ✅ `update($id)` - PUT/PATCH update genre dengan validasi 404 & unique (exclude current)
+- ✅ `destroy($id)` - DELETE genre dengan validasi 404
+
+**AuthorController.php:**
+- ✅ `index()` - GET all authors
+- ✅ `store()` - POST create author (validasi unique email)
+- ✅ `show($id)` - GET author by ID dengan books relation & validasi 404
+- ✅ `update($id)` - PUT/PATCH update author dengan validasi 404 & unique email (exclude current)
+- ✅ `destroy($id)` - DELETE author dengan cascade delete books & validasi 404
+
+**Validasi 404 Not Found:**
+```php
+// Contoh di GenreController
+public function show($id) {
+    $genre = Genre::find($id);
+    
+    if (!$genre) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Genre tidak ditemukan'
+        ], 404);
+    }
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Detail genre',
+        'data' => $genre
+    ], 200);
+}
+```
+
+**Request & Response Format:**
+
+**GET /api/genres/{id} (Show Genre):**
+```json
+// Response Success (200)
+{
+  "success": true,
+  "message": "Detail genre",
+  "data": {
+    "id": 1,
+    "name": "Fiction",
+    "slug": "fiction",
+    ...
+  }
+}
+
+// Response Error (404)
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
+
+**PUT /api/genres/{id} (Update Genre):**
+```json
+// Request Body
+{
+  "name": "Science Fiction"
+}
+
+// Response Success (200)
+{
+  "success": true,
+  "message": "Genre berhasil diperbarui",
+  "data": {
+    "id": 1,
+    "name": "Science Fiction",
+    "slug": "science-fiction",
+    ...
+  }
+}
+
+// Response Error (404)
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+
+// Response Error (422) - Validation
+{
+  "message": "The name has already been taken.",
+  "errors": {
+    "name": ["The name has already been taken."]
+  }
+}
+```
+
+**DELETE /api/genres/{id} (Delete Genre):**
+```json
+// Response Success (200)
+{
+  "success": true,
+  "message": "Genre berhasil dihapus"
+}
+
+// Response Error (404)
+{
+  "success": false,
+  "message": "Genre tidak ditemukan"
+}
+```
+
+**Validasi Update dengan Exclude Current ID:**
+```php
+// Update Genre - unique name kecuali data sendiri
+'name' => 'required|string|max:100|unique:genres,name,' . $id
+
+// Update Author - unique email kecuali data sendiri
+'email' => 'required|email|max:255|unique:authors,email,' . $id
+```
+
+**Testing dengan Postman:**
+
+**Genre CRUD (10 test cases):**
+1. GET /api/genres - Get all genres
+2. POST /api/genres - Create new genre
+3. GET /api/genres/1 - Show genre by ID
+4. PUT /api/genres/1 - Update genre
+5. DELETE /api/genres/6 - Delete genre
+6. GET /api/genres/999 - Show genre not found (404)
+7. PUT /api/genres/999 - Update genre not found (404)
+8. DELETE /api/genres/999 - Delete genre not found (404)
+9. POST /api/genres - Validation error (empty name)
+10. POST /api/genres - Duplicate name error (422)
+
+**Author CRUD (11 test cases):**
+1. GET /api/authors - Get all authors
+2. POST /api/authors - Create new author
+3. GET /api/authors/1 - Show author with books
+4. PUT /api/authors/1 - Update author
+5. DELETE /api/authors/6 - Delete author
+6. GET /api/authors/999 - Show author not found (404)
+7. PUT /api/authors/999 - Update author not found (404)
+8. DELETE /api/authors/999 - Delete author not found (404)
+9. POST /api/authors - Validation error (missing fields)
+10. POST /api/authors - Duplicate email error (422)
+11. POST /api/authors - Invalid email format (422)
+
+**Cara Menjalankan:**
+
+```bash
+# Jalankan server
+php artisan serve
+
+# Lihat semua routes
+php artisan route:list --path=api
+
+# Test di Postman dengan collection
+# Import: Pertemuan_5_Booksales_API_Postman_Collection.json
+```
+
+**Fitur Baru Pertemuan 5:**
+- ✅ Method show() untuk Genre dan Author dengan validasi 404
+- ✅ Method update() untuk Genre dan Author dengan validasi 404 & unique (exclude current)
+- ✅ Method destroy() untuk Genre dan Author dengan validasi 404
+- ✅ Cascade delete untuk Author → Books relationship
+- ✅ Route apiResource menggantikan individual routes
+- ✅ HTTP Status Codes: 200 (Success), 404 (Not Found), 422 (Validation Error)
+- ✅ Fresh() method untuk mendapatkan data ter-update setelah update()
+- ✅ Postman Collection lengkap dengan 21 test cases
+
+**Total API Endpoints:**
+- Genre: 5 endpoints (index, store, show, update, destroy)
+- Author: 5 endpoints (index, store, show, update, destroy)
+- Books: 2 endpoints (index, show) - read only
+
+**Total: 12 API Routes**
+
 
 
 ---
