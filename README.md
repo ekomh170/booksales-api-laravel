@@ -387,14 +387,14 @@ Route::apiResource('authors', AuthorController::class);
 // Contoh di GenreController
 public function show($id) {
     $genre = Genre::find($id);
-    
+
     if (!$genre) {
         return response()->json([
             'success' => false,
             'message' => 'Genre tidak ditemukan'
         ], 404);
     }
-    
+
     return response()->json([
         'success' => true,
         'message' => 'Detail genre',
@@ -599,6 +599,454 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[DevSquad](https://devsquad.com/hire-laravel-developers)**
 - **[Redberry](https://redberry.international/laravel-development)**
 - **[Active Logic](https://activelogic.com)**
+
+---
+
+## 🎯 Tugas Pertemuan 6: Authentication & Authorization
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Kode**: FL-2024226
+- **Topik**: Authentication & Authorization dengan Laravel Sanctum
+- **Group**: 2
+- **Deadline**: Rabu, 22 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, Laravel Sanctum, Middleware, JWT
+
+**Deskripsi Tugas:**
+
+1. Pahami konsep middleware, lalu atur bagian routing
+2. **Read All** dan **Show** pada Author dan Genre, dapat diakses untuk **semua orang**, bahkan yang belum melakukan autentikasi
+3. **Create, Update, dan Destroy** hanya dapat diakses oleh **admin**
+4. Gunakan POSTMAN untuk melakukan testing aplikasi
+5. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File `routes/api.php`
+
+### Requirements
+
+#### Authentication System:
+- ✅ User registration dengan role (admin/user)
+- ✅ User login dengan email & password
+- ✅ Token-based authentication menggunakan Laravel Sanctum
+- ✅ User logout untuk revoke token
+- ✅ Get authenticated user info
+
+#### Authorization Rules:
+- ✅ **Public Access (No Auth Required):**
+  - GET `/api/genres` - List all genres
+  - GET `/api/genres/{id}` - Show genre details
+  - GET `/api/authors` - List all authors
+  - GET `/api/authors/{id}` - Show author details
+  - GET `/api/books` - List all books
+  - GET `/api/books/{id}` - Show book details
+
+- ✅ **Admin Only (Requires auth:sanctum + admin middleware):**
+  - POST `/api/genres` - Create new genre
+  - PUT `/api/genres/{id}` - Update genre
+  - DELETE `/api/genres/{id}` - Delete genre
+  - POST `/api/authors` - Create new author
+  - PUT `/api/authors/{id}` - Update author
+  - DELETE `/api/authors/{id}` - Delete author
+
+### Implementation Details
+
+#### 1. Laravel Sanctum Installation
+```bash
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate
+```
+
+#### 2. User Model Enhancement
+**File:** `app/Models/User.php`
+
+**Changes:**
+- Added `Laravel\Sanctum\HasApiTokens` trait
+- Added `role` field to fillable array
+- Role enum: 'admin' or 'user'
+
+```php
+use Laravel\Sanctum\HasApiTokens;
+
+class User extends Authenticatable
+{
+    use HasApiTokens, HasFactory, Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',  // New field
+    ];
+}
+```
+
+#### 3. Database Migration
+**File:** `database/migrations/0001_01_01_000000_create_users_table.php`
+
+**Added:**
+```php
+$table->enum('role', ['admin', 'user'])->default('user');
+```
+
+#### 4. Authentication Controller
+**File:** `app/Http/Controllers/AuthController.php`
+
+**Methods:**
+- `register(Request $request)` - Register new user, return token
+- `login(Request $request)` - Authenticate user, return token
+- `logout(Request $request)` - Revoke current token
+- `me(Request $request)` - Get authenticated user info
+
+**Sample Request/Response:**
+
+**Register:**
+```json
+POST /api/register
+{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "password123",
+    "password_confirmation": "password123",
+    "role": "user"
+}
+
+Response:
+{
+    "success": true,
+    "message": "User registered successfully",
+    "data": {
+        "user": {...},
+        "access_token": "1|abc...",
+        "token_type": "Bearer"
+    }
+}
+```
+
+**Login:**
+```json
+POST /api/login
+{
+    "email": "admin@booksales.com",
+    "password": "password123"
+}
+
+Response:
+{
+    "success": true,
+    "message": "Login successful",
+    "data": {
+        "user": {
+            "id": 1,
+            "name": "Admin User",
+            "email": "admin@booksales.com",
+            "role": "admin"
+        },
+        "access_token": "2|def...",
+        "token_type": "Bearer"
+    }
+}
+```
+
+#### 5. Admin Middleware
+**File:** `app/Http/Middleware/AdminMiddleware.php`
+
+**Purpose:** Check if authenticated user has 'admin' role
+
+```php
+public function handle(Request $request, Closure $next): Response
+{
+    if (!$request->user() || $request->user()->role !== 'admin') {
+        return response()->json([
+            'success' => false,
+            'message' => 'Unauthorized. Admin access required.'
+        ], 403);
+    }
+
+    return $next($request);
+}
+```
+
+**Registered in:** `bootstrap/app.php`
+```php
+->withMiddleware(function (Middleware $middleware): void {
+    $middleware->alias([
+        'admin' => \App\Http\Middleware\AdminMiddleware::class,
+    ]);
+})
+```
+
+#### 6. API Routes Configuration
+**File:** `routes/api.php`
+
+**Structure:**
+```php
+// Authentication Routes (Public)
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected Auth Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/me', [AuthController::class, 'me']);
+});
+
+// Public Routes (No Authentication)
+Route::get('/genres', [GenreController::class, 'index']);
+Route::get('/genres/{genre}', [GenreController::class, 'show']);
+Route::get('/authors', [AuthorController::class, 'index']);
+Route::get('/authors/{author}', [AuthorController::class, 'show']);
+Route::get('/books', [BookController::class, 'index']);
+Route::get('/books/{id}', [BookController::class, 'show']);
+
+// Admin Only Routes
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Genres
+    Route::post('/genres', [GenreController::class, 'store']);
+    Route::put('/genres/{genre}', [GenreController::class, 'update']);
+    Route::delete('/genres/{genre}', [GenreController::class, 'destroy']);
+
+    // Authors
+    Route::post('/authors', [AuthorController::class, 'store']);
+    Route::put('/authors/{author}', [AuthorController::class, 'update']);
+    Route::delete('/authors/{author}', [AuthorController::class, 'destroy']);
+});
+```
+
+#### 7. User Seeder
+**File:** `database/seeders/UserSeeder.php`
+
+**Test Accounts:**
+
+| Role | Name | Email | Password |
+|------|------|-------|----------|
+| Admin | Admin User | admin@booksales.com | password123 |
+| Admin | Eko Muchamad Haryono | eko@booksales.com | password123 |
+| User | Regular User | user@booksales.com | password123 |
+| User | John Doe | john@booksales.com | password123 |
+
+### API Endpoints Summary
+
+#### Authentication Endpoints
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/register` | No | Register new user |
+| POST | `/api/login` | No | Login user |
+| POST | `/api/logout` | Yes | Logout (revoke token) |
+| GET | `/api/me` | Yes | Get user info |
+
+#### Public Endpoints (No Auth)
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| GET | `/api/genres` | No | List all genres |
+| GET | `/api/genres/{id}` | No | Show genre details |
+| GET | `/api/authors` | No | List all authors |
+| GET | `/api/authors/{id}` | No | Show author details |
+| GET | `/api/books` | No | List all books |
+| GET | `/api/books/{id}` | No | Show book details |
+
+#### Admin Only Endpoints
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| POST | `/api/genres` | Admin | Create genre |
+| PUT | `/api/genres/{id}` | Admin | Update genre |
+| DELETE | `/api/genres/{id}` | Admin | Delete genre |
+| POST | `/api/authors` | Admin | Create author |
+| PUT | `/api/authors/{id}` | Admin | Update author |
+| DELETE | `/api/authors/{id}` | Admin | Delete author |
+
+### Testing dengan Postman
+
+#### 1. Setup Environment Variables
+Create collection variables:
+- `admin_token` - Automatically set after admin login
+- `user_token` - Automatically set after user login
+
+#### 2. Test Flow
+
+**Step 1: Login as Admin**
+```
+POST http://localhost:8000/api/login
+Body:
+{
+    "email": "admin@booksales.com",
+    "password": "password123"
+}
+
+→ Copy access_token from response
+```
+
+**Step 2: Test Public Endpoint (No Token)**
+```
+GET http://localhost:8000/api/genres
+
+→ Should return 200 OK with genres list
+```
+
+**Step 3: Test Admin Endpoint with Admin Token**
+```
+POST http://localhost:8000/api/genres
+Headers:
+    Authorization: Bearer {admin_token}
+Body:
+{
+    "name": "Science Fiction"
+}
+
+→ Should return 201 Created
+```
+
+**Step 4: Login as Regular User**
+```
+POST http://localhost:8000/api/login
+Body:
+{
+    "email": "user@booksales.com",
+    "password": "password123"
+}
+
+→ Copy access_token
+```
+
+**Step 5: Test Authorization Failure**
+```
+POST http://localhost:8000/api/genres
+Headers:
+    Authorization: Bearer {user_token}
+Body:
+{
+    "name": "Test Genre"
+}
+
+→ Should return 403 Forbidden
+→ Message: "Unauthorized. Admin access required."
+```
+
+**Step 6: Test Unauthenticated Access**
+```
+POST http://localhost:8000/api/genres
+Body:
+{
+    "name": "Test Genre"
+}
+
+→ Should return 401 Unauthenticated
+```
+
+### Postman Collection
+
+**File:** `api/Pertemuan_6_Booksales_API_Postman_Collection.json`
+
+**Contains:**
+- 5 Authentication requests (Register, Login Admin, Login User, Me, Logout)
+- 6 Public endpoint tests (Genres, Authors, Books - List & Show)
+- 6 Admin endpoint tests (Create, Update, Delete for Genres & Authors)
+- 4 Authorization failure tests (Without token, With user token)
+
+**Total:** 21 test requests
+
+**Import to Postman:**
+```bash
+File → Import → Select Pertemuan_6_Booksales_API_Postman_Collection.json
+```
+
+### New Features in Pertemuan 6
+
+#### 1. **Token-Based Authentication**
+- Using Laravel Sanctum for API tokens
+- Tokens stored in `personal_access_tokens` table
+- Each login generates new token, old tokens revoked
+
+#### 2. **Role-Based Access Control (RBAC)**
+- Users have roles: 'admin' or 'user'
+- Admin can perform all CRUD operations
+- Regular users can only read public data
+
+#### 3. **Middleware Protection**
+- `auth:sanctum` - Verify valid token
+- `admin` - Verify admin role
+- Combined middleware for admin-only routes
+
+#### 4. **Public API Access**
+- Read operations (GET) are public
+- No authentication required for viewing data
+- Good for public-facing API or mobile apps
+
+#### 5. **Error Handling**
+- 401 Unauthorized - No token or invalid token
+- 403 Forbidden - Valid token but insufficient permissions
+- 422 Unprocessable Entity - Validation errors
+
+### Migration & Seeding
+
+```bash
+# Fresh migration with all seeders
+php artisan migrate:fresh --seed
+
+# Creates:
+# - 4 users (2 admin, 2 regular)
+# - 5 genres
+# - 5 authors
+# - 5 books
+```
+
+### Verification Commands
+
+```bash
+# Check routes
+php artisan route:list --path=api
+
+# Show 16 routes:
+# - 4 auth routes
+# - 6 public routes
+# - 6 admin routes
+```
+
+### Files Modified/Created in Pertemuan 6
+
+**New Files:**
+- `app/Http/Controllers/AuthController.php`
+- `app/Http/Middleware/AdminMiddleware.php`
+- `database/seeders/UserSeeder.php`
+- `database/migrations/2025_10_20_051148_create_personal_access_tokens_table.php`
+- `config/sanctum.php`
+- `api/Pertemuan_6_Booksales_API_Postman_Collection.json`
+
+**Modified Files:**
+- `app/Models/User.php` - Added HasApiTokens trait, role field
+- `database/migrations/0001_01_01_000000_create_users_table.php` - Added role column
+- `bootstrap/app.php` - Registered AdminMiddleware
+- `routes/api.php` - Complete restructure with middleware protection
+- `database/seeders/DatabaseSeeder.php` - Added UserSeeder
+- `composer.json` - Added laravel/sanctum dependency
+
+### Security Best Practices Implemented
+
+✅ Password hashing with bcrypt
+✅ Token-based authentication
+✅ Middleware authorization
+✅ Role-based access control
+✅ Input validation
+✅ CSRF protection (Sanctum)
+✅ Rate limiting (Laravel default)
+✅ Error message sanitization
+
+### Testing Results
+
+**✅ All Tests Passed:**
+- ✅ User registration successful
+- ✅ Admin login returns token
+- ✅ Regular user login returns token
+- ✅ Public endpoints accessible without auth
+- ✅ Admin endpoints accessible with admin token
+- ✅ Admin endpoints blocked for regular users (403)
+- ✅ Admin endpoints blocked without token (401)
+- ✅ Token revocation on logout works
+- ✅ Get user info endpoint works
+
+---
 
 ## Contributing
 

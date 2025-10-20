@@ -1,0 +1,858 @@
+{
+	"info": {
+		"_postman_id": "pertemuan-6-auth-2025",
+		"name": "Pertemuan 6 - Booksales API (Autentikasi & Otorisasi)",
+		"description": "Collection untuk testing Autentikasi & Otorisasi menggunakan Laravel Sanctum.\n\n**Kredensial Testing:**\n- Admin: admin@booksales.com / password123\n- User Biasa: user@booksales.com / password123\n\n**Tugas Pertemuan 6:**\n- Read All dan Show (akses publik)\n- Create, Update, Destroy (hanya admin)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Autentikasi",
+			"item": [
+				{
+					"name": "Daftar User Baru",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"User Test Baru\",\n    \"email\": \"userbaru@booksales.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"register"
+							]
+						},
+						"description": "Mendaftarkan akun user baru. Mengembalikan access token."
+					},
+					"response": []
+				},
+				{
+					"name": "Login sebagai Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"admin_token\", jsonData.data.access_token);",
+									"    pm.collectionVariables.set(\"admin_user_id\", jsonData.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@booksales.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Login dengan kredensial admin. Token akan disimpan otomatis."
+					},
+					"response": []
+				},
+				{
+					"name": "Login sebagai User Biasa",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set(\"user_token\", jsonData.data.access_token);",
+									"    pm.collectionVariables.set(\"user_user_id\", jsonData.data.user.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@booksales.com\",\n    \"password\": \"password123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"login"
+							]
+						},
+						"description": "Login dengan kredensial user biasa. Token akan disimpan otomatis."
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Info User Saat Ini",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"me"
+							]
+						},
+						"description": "Mendapatkan informasi user yang sedang login. Membutuhkan token valid."
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/logout",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"logout"
+							]
+						},
+						"description": "Logout dan mencabut access token yang sedang aktif."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint autentikasi untuk register, login, dan logout."
+		},
+		{
+			"name": "Endpoint Publik (Tanpa Autentikasi)",
+			"item": [
+				{
+					"name": "Dapatkan Semua Genre (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Genre by ID (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres",
+								"1"
+							]
+						},
+						"description": "Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Semua Author (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "✅ Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Author by ID (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						},
+						"description": "Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Semua Books (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/books",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"books"
+							]
+						},
+						"description": "✅ Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				},
+				{
+					"name": "Dapatkan Buku by ID (Publik)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/books/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"books",
+								"1"
+							]
+						},
+						"description": "Akses publik - Tidak memerlukan autentikasi"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint yang dapat diakses tanpa autentikasi"
+		},
+		{
+			"name": "Endpoint Khusus Admin (Genre)",
+			"item": [
+				{
+					"name": "Buat Genre Baru (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fiksi Ilmiah\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Genre (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fiksi Ilmiah - Diperbarui\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres",
+								"6"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Hapus Genre (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/genres/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres",
+								"6"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint khusus admin untuk mengelola genre (Create, Update, Destroy)."
+		},
+		{
+			"name": "Endpoint Khusus Admin (Author)",
+			"item": [
+				{
+					"name": "Buat Author Baru (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Isaac Asimov\",\n    \"bio\": \"Penulis Amerika dan profesor biokimia, terkenal dengan karya fiksi ilmiahnya.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Isaac Asimov - Diperbarui\",\n    \"bio\": \"Penulis fiksi ilmiah terkenal dikenal dengan seri Foundation.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"6"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				},
+				{
+					"name": "Hapus Author (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"6"
+							]
+						},
+						"description": "Khusus admin - Memerlukan token admin"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoint khusus admin untuk mengelola author (Create, Update, Destroy)."
+		},
+		{
+			"name": "Test Otorisasi (Harus Gagal)",
+			"item": [
+				{
+					"name": "Buat Genre TANPA Token (401)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Genre Test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Harus gagal dengan 401 Unauthenticated"
+					},
+					"response": []
+				},
+				{
+					"name": "Buat Genre dengan Token User Biasa (403)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Genre Test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/genres",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"genres"
+							]
+						},
+						"description": "Harus gagal dengan 403 Forbidden (Unauthorized. Admin access required.)"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Author TANPA Token (401)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Author Test\",\n    \"bio\": \"Bio test\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						},
+						"description": "Harus gagal dengan 401 Unauthenticated"
+					},
+					"response": []
+				},
+				{
+					"name": "Hapus Author dengan Token User Biasa (403)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/authors/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"authors",
+								"1"
+							]
+						},
+						"description": "Harus gagal dengan 403 Forbidden (Unauthorized. Admin access required.)"
+					},
+					"response": []
+				}
+			],
+			"description": "Test case yang harus gagal untuk memverifikasi otorisasi berfungsi dengan benar."
+		}
+	],
+	"variable": [
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_user_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_user_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

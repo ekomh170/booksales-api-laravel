@@ -26,6 +26,14 @@
 - **Group**: 2
 - **Deadline**: Senin, 20 Oktober 2025, 23:59
 
+### Pertemuan 6
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Pertemuan**: 6 (20 Oktober 2025)
+- **Topik**: Authentication & Authorization dengan Laravel Sanctum
+- **Group**: 2
+- **Deadline**: Kamis, 23 Oktober 2025, 23:59
+
 ---
 
 ## 🚀 Base URL
@@ -798,6 +806,278 @@ Accept: application/json
 
 ---
 
+## 🔐 Authentication & Authorization (Pertemuan 6)
+
+### Konsep Dasar
+
+**Authentication (Autentikasi):**
+- Proses memverifikasi identitas pengguna
+- Menggunakan Laravel Sanctum untuk API token authentication
+- User login dengan email & password, mendapatkan token
+
+**Authorization (Otorisasi):**
+- Proses menentukan hak akses pengguna
+- Menggunakan role-based access control (admin vs user)
+- Admin memiliki akses penuh, user biasa hanya bisa read
+
+### 15. Register User Baru
+
+Mendaftarkan user baru ke sistem.
+
+**Endpoint:** `POST /api/register`
+
+**Headers:**
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "name": "User Test Baru",
+  "email": "usertest@booksales.com",
+  "password": "password123",
+  "password_confirmation": "password123"
+}
+```
+
+**Validation Rules:**
+- `name` (required, string, max:255)
+- `email` (required, email, unique)
+- `password` (required, string, min:8, confirmed)
+
+**Response Success (201):**
+```json
+{
+  "success": true,
+  "message": "User berhasil didaftarkan",
+  "data": {
+    "user": {
+      "name": "User Test Baru",
+      "email": "usertest@booksales.com",
+      "role": "user",
+      "updated_at": "2025-10-20T10:00:00.000000Z",
+      "created_at": "2025-10-20T10:00:00.000000Z",
+      "id": 5
+    },
+    "access_token": "3|laravel_sanctum_abcdefghijklmnopqrstuvwxyz123456",
+    "token_type": "Bearer"
+  }
+}
+```
+
+**Response Error (422) - Validation Failed:**
+```json
+{
+  "message": "The email has already been taken.",
+  "errors": {
+    "email": [
+      "The email has already been taken."
+    ]
+  }
+}
+```
+
+---
+
+### 16. Login User
+
+Login untuk mendapatkan access token.
+
+**Endpoint:** `POST /api/login`
+
+**Headers:**
+```
+Accept: application/json
+Content-Type: application/json
+```
+
+**Request Body:**
+```json
+{
+  "email": "admin@booksales.com",
+  "password": "password123"
+}
+```
+
+**Validation Rules:**
+- `email` (required, email)
+- `password` (required, string)
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Login berhasil",
+  "data": {
+    "user": {
+      "id": 1,
+      "name": "Admin User",
+      "email": "admin@booksales.com",
+      "role": "admin",
+      "email_verified_at": null,
+      "created_at": "2025-10-20T10:00:00.000000Z",
+      "updated_at": "2025-10-20T10:00:00.000000Z"
+    },
+    "access_token": "1|laravel_sanctum_abcdefghijklmnopqrstuvwxyz123456",
+    "token_type": "Bearer"
+  }
+}
+```
+
+**Response Error (401) - Invalid Credentials:**
+```json
+{
+  "success": false,
+  "message": "Kredensial yang diberikan tidak sesuai"
+}
+```
+
+---
+
+### 17. Logout User
+
+Logout dan hapus token saat ini.
+
+**Endpoint:** `POST /api/logout`
+
+**Headers:**
+```
+Accept: application/json
+Authorization: Bearer {token}
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Logout berhasil"
+}
+```
+
+**Response Error (401) - Unauthenticated:**
+```json
+{
+  "message": "Unauthenticated."
+}
+```
+
+---
+
+### 18. Get User Info
+
+Mendapatkan informasi user yang sedang login.
+
+**Endpoint:** `GET /api/me`
+
+**Headers:**
+```
+Accept: application/json
+Authorization: Bearer {token}
+```
+
+**Response Success (200):**
+```json
+{
+  "success": true,
+  "message": "Data user berhasil diambil",
+  "data": {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@booksales.com",
+    "role": "admin",
+    "email_verified_at": null,
+    "created_at": "2025-10-20T10:00:00.000000Z",
+    "updated_at": "2025-10-20T10:00:00.000000Z"
+  }
+}
+```
+
+**Response Error (401) - Unauthenticated:**
+```json
+{
+  "message": "Unauthenticated."
+}
+```
+
+---
+
+## 🔒 Protected Endpoints (Pertemuan 6)
+
+### Akses Publik (Tanpa Autentikasi)
+
+Endpoint berikut dapat diakses tanpa login:
+
+**Genre:**
+- ✅ `GET /api/genres` - Dapatkan semua genre
+- ✅ `GET /api/genres/{id}` - Dapatkan genre by ID
+
+**Author:**
+- ✅ `GET /api/authors` - Dapatkan semua author
+- ✅ `GET /api/authors/{id}` - Dapatkan author by ID
+
+**Books:**
+- ✅ `GET /api/books` - Dapatkan semua buku
+- ✅ `GET /api/books/{id}` - Dapatkan buku by ID
+
+### Akses Khusus Admin (Perlu Token + Role Admin)
+
+Endpoint berikut hanya bisa diakses oleh user dengan role `admin`:
+
+**Genre:**
+- 🔒 `POST /api/genres` - Buat genre baru
+- 🔒 `PUT/PATCH /api/genres/{id}` - Update genre
+- 🔒 `DELETE /api/genres/{id}` - Hapus genre
+
+**Author:**
+- 🔒 `POST /api/authors` - Buat author baru
+- 🔒 `PUT/PATCH /api/authors/{id}` - Update author
+- 🔒 `DELETE /api/authors/{id}` - Hapus author
+
+**Response Error (401) - Tanpa Token:**
+```json
+{
+  "message": "Unauthenticated."
+}
+```
+
+**Response Error (403) - User Biasa Coba Akses Endpoint Admin:**
+```json
+{
+  "success": false,
+  "message": "Unauthorized. Admin access required."
+}
+```
+
+---
+
+## 👥 Test Accounts (Pertemuan 6)
+
+### Admin Accounts
+```
+Email: admin@booksales.com
+Password: password123
+Role: admin
+
+Email: eko@booksales.com
+Password: password123
+Role: admin
+```
+
+### User Accounts (Tidak Bisa Akses Endpoint Admin)
+```
+Email: user@booksales.com
+Password: password123
+Role: user
+
+Email: john@booksales.com
+Password: password123
+Role: user
+```
+
+---
+
 ## 🧪 Testing dengan Postman
 
 ### Import Collection
@@ -808,6 +1088,7 @@ Accept: application/json
    - **Pertemuan 3**: `Pertemuan_3_Booksales_API_Postman_Collection.json`
    - **Pertemuan 4**: `Pertemuan_4_Booksales_API_Postman_Collection.json`
    - **Pertemuan 5**: `Pertemuan_5_Booksales_API_Postman_Collection.json`
+   - **Pertemuan 6**: `Pertemuan_6_Booksales_API_Postman_Collection.json`
 4. Collection akan otomatis ter-import dengan semua endpoint
 
 ### Menjalankan Tests
@@ -845,7 +1126,36 @@ Accept: application/json
    - PUT/PATCH /api/authors/{id} (Update - Edit Author)
    - DELETE /api/authors/{id} (Destroy - Delete Author)
 
-5. **Test Error Handling:**
+5. **Test Pertemuan 6 - Authentication & Authorization:**
+
+   **Authentication:**
+   - POST /api/register (Daftar user baru)
+   - POST /api/login (Login sebagai admin: admin@booksales.com)
+   - POST /api/login (Login sebagai user: user@booksales.com)
+   - GET /api/me (Dapatkan info user saat ini - perlu token)
+   - POST /api/logout (Logout - perlu token)
+
+   **Public Endpoints (Tanpa Token):**
+   - GET /api/genres (Dapatkan semua genre - akses publik)
+   - GET /api/genres/{id} (Dapatkan genre by ID - akses publik)
+   - GET /api/authors (Dapatkan semua author - akses publik)
+   - GET /api/authors/{id} (Dapatkan author by ID - akses publik)
+
+   **Admin Only Endpoints (Perlu Token Admin):**
+   - POST /api/genres (Buat genre baru - hanya admin)
+   - PUT /api/genres/{id} (Update genre - hanya admin)
+   - DELETE /api/genres/{id} (Hapus genre - hanya admin)
+   - POST /api/authors (Buat author baru - hanya admin)
+   - PUT /api/authors/{id} (Update author - hanya admin)
+   - DELETE /api/authors/{id} (Hapus author - hanya admin)
+
+   **Authorization Tests (Harus Gagal):**
+   - POST /api/genres (Tanpa token - harus 401 Unauthenticated)
+   - POST /api/genres (Dengan token user biasa - harus 403 Unauthorized)
+   - DELETE /api/authors/{id} (Tanpa token - harus 401 Unauthenticated)
+   - DELETE /api/authors/{id} (Dengan token user biasa - harus 403 Unauthorized)
+
+6. **Test Error Handling:**
    - GET /api/authors/999 (Author tidak ditemukan - 404)
    - GET /api/books/999 (Book tidak ditemukan - 404)
    - GET /api/genres/999 (Genre tidak ditemukan - 404)
@@ -855,6 +1165,8 @@ Accept: application/json
    - PUT /api/authors/999 (update author tidak ada - 404)
    - DELETE /api/genres/999 (delete genre tidak ada - 404)
    - DELETE /api/authors/999 (delete author tidak ada - 404)
+   - POST /api/login (kredensial salah - 401)
+   - POST /api/register (email sudah terdaftar - 422)
 
 ### Expected Results
 
@@ -872,9 +1184,47 @@ Accept: application/json
 - ✅ Validasi email unique untuk author
 - ✅ Response format JSON sesuai struktur
 
+**Pertemuan 6:**
+- ✅ Status Code 201 untuk register berhasil
+- ✅ Status Code 200 untuk login berhasil
+- ✅ Status Code 401 untuk kredensial salah
+- ✅ Status Code 401 untuk endpoint protected tanpa token
+- ✅ Status Code 403 untuk user biasa akses endpoint admin
+- ✅ Token authentication dengan Bearer token
+- ✅ Role-based authorization (admin vs user)
+- ✅ Public endpoints dapat diakses tanpa token
+- ✅ Admin endpoints hanya bisa diakses dengan token admin
+
 ---
 
 ## 📊 Database Schema
+
+### Users Table (Pertemuan 6)
+```sql
+- id (bigint, primary key, auto increment)
+- name (varchar 255)
+- email (varchar 255, unique)
+- email_verified_at (timestamp, nullable)
+- password (varchar 255)
+- role (enum: 'admin', 'user', default: 'user')
+- remember_token (varchar 100, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
+```
+
+### Personal Access Tokens Table (Laravel Sanctum)
+```sql
+- id (bigint, primary key, auto increment)
+- tokenable_type (varchar 255)
+- tokenable_id (bigint)
+- name (varchar 255)
+- token (varchar 64, unique)
+- abilities (text, nullable)
+- last_used_at (timestamp, nullable)
+- expires_at (timestamp, nullable)
+- created_at (timestamp)
+- updated_at (timestamp)
+```
 
 ### Genres Table (Pertemuan 4)
 ```sql
@@ -917,6 +1267,57 @@ Accept: application/json
 ### Relationships
 - Author `hasMany` Books
 - Book `belongsTo` Author
+- User `hasMany` PersonalAccessTokens (Sanctum)
+
+---
+
+## 🔐 Security & Authentication Flow (Pertemuan 6)
+
+### 1. Registrasi User
+```
+POST /api/register
+→ Validasi input
+→ Hash password dengan bcrypt
+→ Simpan user dengan role 'user' (default)
+→ Generate API token
+→ Return user + token
+```
+
+### 2. Login User
+```
+POST /api/login
+→ Validasi email & password
+→ Cek kredensial dengan Hash::check()
+→ Generate API token (Sanctum)
+→ Return user + token
+```
+
+### 3. Menggunakan Token untuk Request
+```
+Headers:
+Authorization: Bearer {token}
+
+→ Laravel Sanctum verify token
+→ auth:sanctum middleware check
+→ Jika valid, lanjut ke controller
+→ Jika tidak valid, return 401
+```
+
+### 4. Role-Based Authorization
+```
+→ Request masuk dengan token valid
+→ auth:sanctum middleware pass
+→ admin middleware check role
+→ Jika role = 'admin', lanjut ke controller
+→ Jika role = 'user', return 403
+```
+
+### 5. Logout User
+```
+POST /api/logout
+→ Delete current access token
+→ User harus login ulang untuk akses protected endpoints
+```
 
 ---
 
@@ -1017,8 +1418,40 @@ Accept: application/json
    - `api/API_DOCUMENTATION.md` (updated)
    - `api/Pertemuan_4_Booksales_API_Postman_Collection.json`
 
+### Pertemuan 6
+1. **Controller:**
+   - `app/Http/Controllers/AuthController.php` (register, login, logout, me)
+
+2. **Middleware:**
+   - `app/Http/Middleware/AdminMiddleware.php` (role-based authorization)
+
+3. **Models:**
+   - `app/Models/User.php` (updated with HasApiTokens trait, role fillable)
+
+4. **Migration:**
+   - `database/migrations/0001_01_01_000000_create_users_table.php` (updated with role column)
+   - `database/migrations/xxxx_create_personal_access_tokens_table.php` (Sanctum)
+
+5. **Seeder:**
+   - `database/seeders/UserSeeder.php` (4 test users: 2 admin, 2 user)
+
+6. **Routes:**
+   - `routes/api.php` (updated with auth routes + middleware protection)
+
+7. **Config:**
+   - `config/sanctum.php` (Laravel Sanctum configuration)
+   - `bootstrap/app.php` (AdminMiddleware registration)
+
+8. **Dependencies:**
+   - `composer.json` (updated with laravel/sanctum v4.2.0)
+
+9. **Documentation:**
+   - `README.md` (updated with Pertemuan 6 section)
+   - `api/API_DOCUMENTATION.md` (updated with authentication endpoints)
+   - `api/Pertemuan_6_Booksales_API_Postman_Collection.json`
+
 ---
 
-**Dibuat untuk memenuhi Tugas Pertemuan 3**
+**Dibuat untuk memenuhi Tugas Pertemuan 3 - Pertemuan 6**
 **SIB Fullstack Web Developer - Nurul Fikri Academy**
 **Eko Muchamad Haryono - 0110223079**
