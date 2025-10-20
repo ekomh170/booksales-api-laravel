@@ -13,17 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Jalankan seeder untuk Genre, Author dan Book
+        // Jalankan seeder untuk User (Pertemuan 6 - Authentication)
         $this->call([
+            UserSeeder::class,
             GenreSeeder::class,
             AuthorSeeder::class,
             BookSeeder::class,
-        ]);
-
-        // User::factory(10)->create();
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
         ]);
     }
 }
