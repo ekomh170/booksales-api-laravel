@@ -1071,7 +1071,7 @@ Email: user@booksales.com
 Password: password123
 Role: user
 
-Email: john@booksales.com
+Email: akbar@booksales.com
 Password: password123
 Role: user
 ```

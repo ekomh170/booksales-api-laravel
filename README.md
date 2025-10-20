@@ -765,7 +765,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
 | Admin | Admin User | admin@booksales.com | password123 |
 | Admin | Eko Muchamad Haryono | eko@booksales.com | password123 |
 | User | Regular User | user@booksales.com | password123 |
-| User | John Doe | john@booksales.com | password123 |
+| User | Muhammad Akbar Maulana | akbar@booksales.com | password123 |
 
 ### Ringkasan Endpoint API
 
