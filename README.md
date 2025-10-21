@@ -355,15 +355,7 @@ POST http://localhost:8000/api/authors
 Route::apiResource('genres', GenreController::class);
 Route::apiResource('authors', AuthorController::class);
 
-// Auto-generated routes:
-// Genre:
-// GET    /api/genres           -> index()   (Read all)
-// POST   /api/genres           -> store()   (Create)
-// GET    /api/genres/{id}      -> show()    (Read one)
-// PUT    /api/genres/{id}      -> update()  (Update)
-// DELETE /api/genres/{id}      -> destroy() (Delete)
 
-// Author: (sama seperti di atas)
 ```
 
 **Controllers dengan Full CRUD:**
@@ -985,6 +977,584 @@ php artisan route:list --path=api
 - ✅ Endpoint admin diblokir tanpa token (401)
 - ✅ Pencabutan token saat logout bekerja
 - ✅ Endpoint get user info bekerja
+
+---
+
+## 🎯 Tugas Pertemuan 7: CRUD Transaksi dengan Relasi Model
+
+**Identitas Tugas:**
+
+- **Nama**: Eko Muchamad Haryono
+- **NIM**: 0110223079
+- **Kode**: FL-2024226
+- **Topik**: CRUD Transaksi dengan Foreign Key & Authorization
+- **Group**: 2
+- **Deadline**: Kamis, 23 Oktober 2025, 23:59
+- **Teknologi**: Laravel 12, PHP 8.2, Laravel Sanctum, Foreign Key Relations
+
+**Deskripsi Tugas:**
+
+1. Ikuti panduan video dalam menyelesaikan **CRUD pada tabel Transaksi**
+2. **Create, Update, dan Show** hanya dapat diakses oleh **customer yang sudah melakukan autentikasi**
+3. **Read All dan Destroy** hanya dapat diakses oleh **admin**
+4. Implementasikan:
+   - Mengambil data dari relasi Model
+   - Mengatur relasi di migration dengan foreignId
+5. Gunakan POSTMAN untuk melakukan testing aplikasi
+6. Push ke GitHub, kemudian cantumkan ke kantung tugas:
+   - Link repository
+   - File `routes/api.php`
+
+### Persyaratan
+
+#### Struktur Tabel Transactions:
+- ✅ `id` (bigint, PK, auto increment)
+- ✅ `order_number` (varchar 25, unique) - Auto-generated
+- ✅ `customer_id` (bigint, FK ke users)
+- ✅ `book_id` (bigint, FK ke books)
+- ✅ `total_amount` (decimal 10,2)
+- ✅ `created_at`, `updated_at` (timestamp)
+
+#### Aturan Otorisasi Khusus:
+- ✅ **Customer Operations (auth:sanctum):**
+  - POST `/api/transactions` - Buat transaksi baru
+  - GET `/api/transactions/{id}` - Lihat transaksi sendiri (ownership validation)
+  - PUT `/api/transactions/{id}` - Update transaksi sendiri (ownership validation)
+
+- ✅ **Admin Operations (auth:sanctum + admin):**
+  - GET `/api/transactions` - Lihat semua transaksi
+  - DELETE `/api/transactions/{id}` - Hapus transaksi
+
+### Detail Implementasi
+
+#### 1. Migration Transactions
+**File:** `database/migrations/2025_10_21_025620_create_transactions_table.php`
+
+```php
+Schema::create('transactions', function (Blueprint $table) {
+    $table->id();
+    $table->string('order_number', 25)->unique();
+    $table->foreignId('customer_id')->constrained('users')->onDelete('cascade');
+    $table->foreignId('book_id')->constrained()->onDelete('cascade');
+    $table->decimal('total_amount', 10, 2);
+    $table->timestamps();
+});
+```
+
+**Fitur:**
+- ✅ `foreignId('customer_id')` dengan constraint ke tabel `users`
+- ✅ `foreignId('book_id')` dengan constraint ke tabel `books`
+- ✅ `onDelete('cascade')` - Hapus transaksi jika user/book dihapus
+- ✅ `order_number` unique untuk tracking
+
+#### 2. Model Transaction
+**File:** `app/Models/Transaction.php`
+
+```php
+protected $fillable = [
+    'order_number',
+    'customer_id',
+    'book_id',
+    'total_amount',
+];
+
+protected $casts = [
+    'total_amount' => 'decimal:2',
+];
+
+// Relasi: Transaction belongsTo User (customer)
+public function customer()
+{
+    return $this->belongsTo(User::class, 'customer_id');
+}
+
+// Relasi: Transaction belongsTo Book
+public function book()
+{
+    return $this->belongsTo(Book::class);
+}
+```
+
+#### 3. Update Model User & Book
+**File:** `app/Models/User.php`
+
+```php
+// Relasi: User hasMany Transactions
+public function transactions()
+{
+    return $this->hasMany(Transaction::class, 'customer_id');
+}
+```
+
+**File:** `app/Models/Book.php`
+
+```php
+// Relasi: Book hasMany Transactions
+public function transactions()
+{
+    return $this->hasMany(Transaction::class);
+}
+```
+
+#### 4. Transaction Controller
+**File:** `app/Http/Controllers/TransactionController.php`
+
+**Method:**
+
+**a. index() - Admin Only**
+```php
+public function index()
+{
+    $transactions = Transaction::with(['customer', 'book'])->get();
+    return response()->json([...], 200);
+}
+```
+
+**b. store() - Authenticated Customer**
+```php
+public function store(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'book_id' => 'required|exists:books,id',
+        'total_amount' => 'required|numeric|min:0',
+    ]);
+
+    // Generate unique order number
+    $order_number = 'ORD-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -6));
+
+    $transaction = Transaction::create([
+        'order_number' => $order_number,
+        'customer_id' => $request->user()->id,
+        'book_id' => $request->book_id,
+        'total_amount' => $request->total_amount,
+    ]);
+
+    $transaction->load(['customer', 'book']);
+    return response()->json([...], 201);
+}
+```
+
+**c. show() - Authenticated Customer (Own Transaction)**
+```php
+public function show(Request $request, $id)
+{
+    $transaction = Transaction::with(['customer', 'book'])->find($id);
+
+    if (!$transaction) {
+        return response()->json([...], 404);
+    }
+
+    // Ownership validation
+    if ($transaction->customer_id !== $request->user()->id) {
+        return response()->json([...], 403);
+    }
+
+    return response()->json([...], 200);
+}
+```
+
+**d. update() - Authenticated Customer (Own Transaction)**
+```php
+public function update(Request $request, $id)
+{
+    $transaction = Transaction::find($id);
+
+    if (!$transaction) {
+        return response()->json([...], 404);
+    }
+
+    // Ownership validation
+    if ($transaction->customer_id !== $request->user()->id) {
+        return response()->json([...], 403);
+    }
+
+    $validator = Validator::make($request->all(), [
+        'book_id' => 'sometimes|required|exists:books,id',
+        'total_amount' => 'sometimes|required|numeric|min:0',
+    ]);
+
+    // Update fields
+    if ($request->has('book_id')) {
+        $transaction->book_id = $request->book_id;
+    }
+    if ($request->has('total_amount')) {
+        $transaction->total_amount = $request->total_amount;
+    }
+
+    $transaction->save();
+    $transaction->load(['customer', 'book']);
+    return response()->json([...], 200);
+}
+```
+
+**e. destroy() - Admin Only**
+```php
+public function destroy($id)
+{
+    $transaction = Transaction::find($id);
+
+    if (!$transaction) {
+        return response()->json([...], 404);
+    }
+
+    $transaction->delete();
+    return response()->json([...], 200);
+}
+```
+
+#### 5. Konfigurasi Route API
+**File:** `routes/api.php`
+
+```php
+// ==================== CUSTOMER ROUTES (Pertemuan 7) ====================
+// Create, Update, dan Show hanya dapat diakses oleh customer yang sudah autentikasi
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Transactions - Authenticated Customer
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::put('/transactions/{id}', [TransactionController::class, 'update'])->name('transactions.update');
+});
+
+// ==================== ADMIN ROUTES ====================
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    // Transactions - Admin only (Read All & Destroy)
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
+});
+```
+
+#### 6. Transaction Seeder
+**File:** `database/seeders/TransactionSeeder.php`
+
+**Data Dummy:** 15 transaksi dengan berbagai kombinasi user dan book
+
+```php
+$transactions = [
+    [
+        'order_number' => 'ORD-20251021-A1B2C3',
+        'customer_id' => $customers->get(0)->id,
+        'book_id' => $books->get(0)->id,
+        'total_amount' => 150000.00,
+    ],
+    // ... 14 transaksi lainnya
+];
+```
+
+### Contoh Request & Response
+
+#### 1. Create Transaction (Customer)
+```json
+POST /api/transactions
+Headers:
+    Authorization: Bearer {customer_token}
+
+Request Body:
+{
+    "book_id": 1,
+    "total_amount": 150000
+}
+
+Response (201 Created):
+{
+    "success": true,
+    "message": "Transaksi berhasil dibuat",
+    "data": {
+        "id": 16,
+        "order_number": "ORD-20251021-A1B2C3",
+        "customer_id": 2,
+        "book_id": 1,
+        "total_amount": "150000.00",
+        "created_at": "2025-10-21T...",
+        "updated_at": "2025-10-21T...",
+        "customer": {
+            "id": 2,
+            "name": "Regular User",
+            "email": "user@booksales.com"
+        },
+        "book": {
+            "id": 1,
+            "title": "Laskar Pelangi",
+            "price": "150000.00"
+        }
+    }
+}
+```
+
+#### 2. Show Own Transaction (Customer)
+```json
+GET /api/transactions/16
+Headers:
+    Authorization: Bearer {customer_token}
+
+Response (200 OK):
+{
+    "success": true,
+    "message": "Detail transaksi",
+    "data": {
+        "id": 16,
+        "order_number": "ORD-20251021-A1B2C3",
+        "customer": {...},
+        "book": {...}
+    }
+}
+```
+
+#### 3. Try to View Another User's Transaction (Should Fail)
+```json
+GET /api/transactions/1
+Headers:
+    Authorization: Bearer {customer2_token}
+
+Response (403 Forbidden):
+{
+    "success": false,
+    "message": "Anda tidak memiliki akses ke transaksi ini"
+}
+```
+
+#### 4. Get All Transactions (Admin)
+```json
+GET /api/transactions
+Headers:
+    Authorization: Bearer {admin_token}
+
+Response (200 OK):
+{
+    "success": true,
+    "message": "Data transaksi berhasil diambil",
+    "data": [
+        {
+            "id": 1,
+            "order_number": "ORD-20251021-A1B2C3",
+            "customer": {...},
+            "book": {...}
+        },
+        // ... semua transaksi
+    ]
+}
+```
+
+#### 5. Customer Try to Get All (Should Fail)
+```json
+GET /api/transactions
+Headers:
+    Authorization: Bearer {customer_token}
+
+Response (403 Forbidden):
+{
+    "success": false,
+    "message": "Unauthorized. Admin access required."
+}
+```
+
+### Ringkasan Endpoint API Pertemuan 7
+
+| Method | Endpoint | Auth | Role | Deskripsi |
+|--------|----------|------|------|-----------|
+| POST | `/api/transactions` | Ya | Customer | Buat transaksi baru |
+| GET | `/api/transactions/{id}` | Ya | Customer | Lihat transaksi sendiri |
+| PUT | `/api/transactions/{id}` | Ya | Customer | Update transaksi sendiri |
+| GET | `/api/transactions` | Ya | Admin | Lihat semua transaksi |
+| DELETE | `/api/transactions/{id}` | Ya | Admin | Hapus transaksi |
+
+### Testing dengan Postman
+
+**File:** `api/Pertemuan_7_Booksales_API_Postman_Collection.json`
+
+**Test Cases:**
+
+**1. Autentikasi (3 requests)**
+- Login sebagai Customer (user@booksales.com)
+- Login sebagai Customer (akbar@booksales.com)
+- Login sebagai Admin
+
+**2. Transaksi - Operasi Customer (3 requests)**
+- Buat Transaksi (Customer)
+- Lihat Transaksi Sendiri (Customer)
+- Update Transaksi Sendiri (Customer)
+
+**3. Transaksi - Tes Otorisasi (3 requests)**
+- Coba Lihat Transaksi User Lain (Harus Gagal 403)
+- Customer Coba Lihat Semua Transaksi (Harus Gagal 403)
+- Customer Coba Hapus Transaksi (Harus Gagal 403)
+
+**4. Transaksi - Operasi Admin (2 requests)**
+- Lihat Semua Transaksi (Admin)
+- Hapus Transaksi (Admin)
+
+**5. Buku - Lihat Semua (Untuk Referensi) (1 request)**
+- Lihat Semua Buku
+
+**Total:** 12 request testing
+
+### Alur Testing
+
+**Langkah 1: Login sebagai Customer**
+```bash
+POST http://localhost:8000/api/login
+Body: { "email": "user@booksales.com", "password": "password123" }
+→ Simpan token ke {{customer_token}}
+```
+
+**Langkah 2: Buat Transaksi**
+```bash
+POST http://localhost:8000/api/transactions
+Headers: Authorization: Bearer {{customer_token}}
+Body: { "book_id": 1, "total_amount": 150000 }
+→ Harus return 201 Created dengan order_number
+→ Simpan transaction_id
+```
+
+**Langkah 3: Lihat Transaksi Sendiri**
+```bash
+GET http://localhost:8000/api/transactions/{{transaction_id}}
+Headers: Authorization: Bearer {{customer_token}}
+→ Harus return 200 OK dengan data customer dan book
+```
+
+**Langkah 4: Login sebagai Customer 2**
+```bash
+POST http://localhost:8000/api/login
+Body: { "email": "akbar@booksales.com", "password": "password123" }
+→ Simpan token ke {{customer2_token}}
+```
+
+**Langkah 5: Test Ownership Validation**
+```bash
+GET http://localhost:8000/api/transactions/{{transaction_id}}
+Headers: Authorization: Bearer {{customer2_token}}
+→ Harus return 403 Forbidden (transaksi bukan miliknya)
+```
+
+**Langkah 6: Login sebagai Admin**
+```bash
+POST http://localhost:8000/api/login
+Body: { "email": "admin@booksales.com", "password": "password123" }
+→ Simpan token ke {{admin_token}}
+```
+
+**Langkah 7: Admin Lihat Semua Transaksi**
+```bash
+GET http://localhost:8000/api/transactions
+Headers: Authorization: Bearer {{admin_token}}
+→ Harus return 200 OK dengan semua transaksi (termasuk relasi)
+```
+
+**Langkah 8: Customer Coba Lihat Semua (Fail)**
+```bash
+GET http://localhost:8000/api/transactions
+Headers: Authorization: Bearer {{customer_token}}
+→ Harus return 403 Forbidden (hanya admin)
+```
+
+### Fitur Baru di Pertemuan 7
+
+#### 1. **Foreign Key Relations**
+- Migration menggunakan `foreignId()` dan `constrained()`
+- Cascade delete untuk integritas referensial
+- Eager loading dengan `with(['customer', 'book'])`
+
+#### 2. **Ownership Validation**
+- Customer hanya bisa melihat/update transaksi sendiri
+- Validasi `$transaction->customer_id !== $request->user()->id`
+- Return 403 Forbidden jika bukan pemilik
+
+#### 3. **Auto-Generated Order Number**
+- Format: `ORD-YYYYMMDD-XXXXXX`
+- Unique untuk setiap transaksi
+- Memudahkan tracking
+
+#### 4. **Dual Authorization Pattern**
+- Customer: auth:sanctum (authenticated users)
+- Admin: auth:sanctum + admin middleware
+- Berbeda dengan Pertemuan 6 (public read, admin CUD)
+
+#### 5. **Relasi Model**
+- Transaction belongsTo User (customer)
+- Transaction belongsTo Book
+- User hasMany Transactions
+- Book hasMany Transactions
+
+### Migrasi & Seeding
+
+```bash
+# Fresh migration dengan seeder
+php artisan migrate:fresh --seed
+
+# Membuat:
+# - 4 users (2 admin, 2 customer)
+# - 5 genres
+# - 5 authors
+# - 5 books
+# - 15 transactions (data dummy)
+```
+
+### Perintah Verifikasi
+
+```bash
+# Cek semua routes
+php artisan route:list --path=api
+
+# Cek relasi di tinker
+php artisan tinker
+>>> $transaction = App\Models\Transaction::with(['customer', 'book'])->first();
+>>> $transaction->customer->name;
+>>> $transaction->book->title;
+```
+
+### File yang Dibuat/Dimodifikasi di Pertemuan 7
+
+**File Baru:**
+- `database/migrations/2025_10_21_025620_create_transactions_table.php`
+- `app/Models/Transaction.php`
+- `app/Http/Controllers/TransactionController.php`
+- `database/seeders/TransactionSeeder.php`
+- `api/Pertemuan_7_Booksales_API_Postman_Collection.json`
+
+**File yang Dimodifikasi:**
+- `app/Models/User.php` - Tambah relasi hasMany transactions
+- `app/Models/Book.php` - Tambah relasi hasMany transactions
+- `routes/api.php` - Tambah routes transactions dengan middleware
+- `database/seeders/DatabaseSeeder.php` - Tambah TransactionSeeder
+
+### Git Commits Pertemuan 7
+
+```bash
+7ce18bf feat(pertemuan-7): tambah migration create_transactions_table dengan foreignId
+0eea47d feat(pertemuan-7): tambah model Transaction dengan relasi belongsTo dan update relasi hasMany di User & Book
+2d3b1ca feat(pertemuan-7): tambah TransactionController dengan CRUD dan validasi ownership
+a5922ff feat(pertemuan-7): tambah routes transactions dengan middleware auth:sanctum dan admin
+b9e530d feat(pertemuan-7): tambah TransactionSeeder dengan 15 data dummy transaksi
+810edc1 docs(pertemuan-7): tambah Postman Collection untuk testing CRUD Transactions dengan otorisasi
+```
+
+### Best Practice yang Diimplementasikan
+
+✅ Foreign key constraints untuk integritas data
+✅ Ownership validation untuk keamanan
+✅ Eager loading untuk performa query
+✅ Auto-generate unique identifier
+✅ Proper HTTP status codes (201, 403, 404)
+✅ Middleware stacking (auth:sanctum + admin)
+✅ Model relations (belongsTo, hasMany)
+✅ Request validation dengan Laravel Validator
+
+### Hasil Testing
+
+**✅ Semua Test Berhasil:**
+- ✅ Customer dapat membuat transaksi baru
+- ✅ Customer dapat melihat transaksi sendiri
+- ✅ Customer dapat mengupdate transaksi sendiri
+- ✅ Customer tidak dapat melihat transaksi user lain (403)
+- ✅ Customer tidak dapat melihat semua transaksi (403)
+- ✅ Customer tidak dapat menghapus transaksi (403)
+- ✅ Admin dapat melihat semua transaksi dengan relasi
+- ✅ Admin dapat menghapus transaksi
+- ✅ Order number ter-generate otomatis dan unique
+- ✅ Eager loading customer dan book bekerja dengan baik
+- ✅ Foreign key constraint berfungsi (cascade delete)
+- ✅ Validasi 404 untuk transaksi tidak ditemukan
 
 ---
 
