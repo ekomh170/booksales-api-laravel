@@ -47,4 +47,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi: User hasMany Transactions
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }

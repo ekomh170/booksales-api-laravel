@@ -34,4 +34,10 @@ class Book extends Model
     {
         return $this->belongsTo(Author::class);
     }
+
+    // Relasi: Book hasMany Transactions
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
 }
