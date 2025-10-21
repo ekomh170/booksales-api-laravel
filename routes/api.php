@@ -5,15 +5,17 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\GenreController;
+use App\Http\Controllers\TransactionController;
 
 /**
- * API Routes untuk Tugas Pertemuan 3, 4, 5 & 6
+ * API Routes untuk Tugas Pertemuan 3, 4, 5, 6 & 7
  *
  * Semua routes akan menggunakan prefix /api secara otomatis
- * Contoh: /api/authors, /api/books, /api/genres
+ * Contoh: /api/authors, /api/books, /api/genres, /api/transactions
  *
  * Pertemuan 5: Menggunakan apiResource untuk CRUD lengkap
  * Pertemuan 6: Authentication & Authorization dengan middleware
+ * Pertemuan 7: CRUD Transaksi dengan relasi dan otorisasi khusus
  */
 
 // ==================== AUTHENTICATION ROUTES (Pertemuan 6) ====================
@@ -54,5 +56,18 @@ Route::middleware(['auth:sanctum', 'admin'])->group(function () {
     Route::post('/authors', [AuthorController::class, 'store'])->name('authors.store');
     Route::put('/authors/{author}', [AuthorController::class, 'update'])->name('authors.update');
     Route::delete('/authors/{author}', [AuthorController::class, 'destroy'])->name('authors.destroy');
+
+    // Transactions - Admin only (Read All & Destroy)
+    Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
+    Route::delete('/transactions/{id}', [TransactionController::class, 'destroy'])->name('transactions.destroy');
 });
 
+// ==================== CUSTOMER ROUTES (Pertemuan 7) ====================
+// Create, Update, dan Show hanya dapat diakses oleh customer yang sudah autentikasi
+
+Route::middleware('auth:sanctum')->group(function () {
+    // Transactions - Authenticated Customer
+    Route::post('/transactions', [TransactionController::class, 'store'])->name('transactions.store');
+    Route::get('/transactions/{id}', [TransactionController::class, 'show'])->name('transactions.show');
+    Route::put('/transactions/{id}', [TransactionController::class, 'update'])->name('transactions.update');
+});
